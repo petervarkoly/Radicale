@@ -46,6 +46,9 @@ class Auth(auth.BaseAuth):
         self._ldap_secret = configuration.get("auth", "ldap_secret")
         self._ldap_filter = configuration.get("auth", "ldap_filter")
         self._ldaps_certificate = configuration.get("auth", "ldaps_certificate")
+        # If a ldaps_certificate is set, configure ldap to use it
+        if self._ldaps_certificate:
+            ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, self._ldaps_certificate)
 
     def login(self, login: str, password: str) -> str:
         """Validate credentials.
