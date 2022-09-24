@@ -202,7 +202,11 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "value": "False",
             "help": "load the ldap groups of the authenticated user",
             "type": bool}),
-        ])),
+        ( "ldaps_certificate", {
+            "value": "/etc/radicale/ldap_certificate.pem",
+            "help": "ldap server certificate",
+            "type": filepath}),
+    ])),
     ("rights", OrderedDict([
         ("type", {
             "value": "owner_only",
