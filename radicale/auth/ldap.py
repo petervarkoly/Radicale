@@ -59,6 +59,7 @@ class Auth(auth.BaseAuth):
         """
         try:
             """Bind as reader dn"""
+            conn = ldap.initialize(self._ldap_uri)
             conn.protocol_version = 3
             conn.set_option(ldap.OPT_REFERRALS, 0)
             conn.simple_bind_s(self._ldap_reader_dn, self._ldap_secret)
