@@ -34,7 +34,7 @@ install_requires = ["defusedxml", "passlib", "vobject>=0.9.6",
 bcrypt_requires = ["passlib[bcrypt]", "bcrypt"]
 # typeguard requires pytest<7
 test_requires = ["pytest<7", "typeguard", "waitress", *bcrypt_requires]
-ldap_requires = ["python-ldap<=3.4.2"]
+ldap_requires = ["python-ldap>=3.4.3,<3.5.0"]
 
 setup(
     name="Radicale",
