@@ -752,6 +752,12 @@ Load the ldap groups of the authenticated user. These groups can be used later o
 
 Default: False
 
+##### ldaps_certificate
+
+Path to a certificate to authenticate against LDAPS server, e.g. for self-signed certificate or CAs.
+
+Default: None
+
 #### rights
 
 ##### type

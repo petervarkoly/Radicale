@@ -22,11 +22,14 @@ Following parameters are needed in the configuration
    ldap_secret    The password of the ldap_reader_dn
    ldap_filter    The search filter to find the user to authenticate by the username
    ldap_load_groups If the groups of the authenticated users need to be loaded
+   ldaps_certificate The path to a certificate to validate ldaps with
 """
 
+import os
 import ldap
 from radicale import auth, config
 from radicale.log import logger
+
 
 class Auth(auth.BaseAuth):
     _ldap_uri: str
@@ -38,12 +41,19 @@ class Auth(auth.BaseAuth):
 
     def __init__(self, configuration: config.Configuration) -> None:
         super().__init__(configuration)
-        self._ldap_uri  = configuration.get("auth", "ldap_uri")
+        self._ldap_uri = configuration.get("auth", "ldap_uri")
         self._ldap_base = configuration.get("auth", "ldap_base")
-        self._ldap_reader_dn = configuration.get("auth", "ldap_reader_dn")
+
+        # Load LDAP reader details via env first if available
+        self._ldap_reader_dn = os.environ.get("AUTH__LDAP_READER_DN", configuration.get("auth", "ldap_reader_dn"))
+        self._ldap_secret = os.environ.get("AUTH__LDAP_SECRET", configuration.get("auth", "ldap_secret"))
+
         self._ldap_load_groups = configuration.get("auth", "ldap_load_groups")
-        self._ldap_secret    = configuration.get("auth", "ldap_secret")
-        self._ldap_filter    = configuration.get("auth", "ldap_filter")
+        self._ldap_filter = configuration.get("auth", "ldap_filter")
+        self._ldaps_certificate = configuration.get("auth", "ldaps_certificate")
+        # If a ldaps_certificate is set, configure ldap to use it
+        if self._ldaps_certificate:
+            ldap.set_option(ldap.OPT_X_TLS_CACERTFILE, self._ldaps_certificate)
 
     def login(self, login: str, password: str) -> str:
         """Validate credentials.
@@ -59,30 +69,38 @@ class Auth(auth.BaseAuth):
             conn.set_option(ldap.OPT_REFERRALS, 0)
             conn.simple_bind_s(self._ldap_reader_dn, self._ldap_secret)
             """Search for the dn of user to authenticate"""
-            res = conn.search_s(self._ldap_base, ldap.SCOPE_SUBTREE, filterstr=self._ldap_filter.format(login), attrlist=['memberOf'])
+            res = conn.search_s(
+                self._ldap_base,
+                ldap.SCOPE_SUBTREE,
+                filterstr=self._ldap_filter.format(login),
+                attrlist=["memberOf"],
+            )
             if len(res) == 0:
-                """User could not be find"""
+                """User could not be found"""
+                logger.debug("LDAP search returned no results.")
                 return ""
             user_dn = res[0][0]
-            logger.debug("LDAP Auth user: %s",user_dn)
+            logger.debug("LDAP Auth user: %s", user_dn)
             """Close ldap connection"""
             conn.unbind()
         except Exception:
-            raise RuntimeError("Invalide ldap configuration")
+            raise RuntimeError("Invalid ldap configuration")
 
         try:
             """Bind as user to authenticate"""
             conn = ldap.initialize(self._ldap_uri)
             conn.protocol_version = 3
             conn.set_option(ldap.OPT_REFERRALS, 0)
-            conn.simple_bind_s(user_dn,password)
+            conn.simple_bind_s(user_dn, password)
             tmp = []
             if self._ldap_load_groups:
                 tmp = []
-                for t in res[0][1]['memberOf']:
-                    tmp.append(t.decode('utf-8').split(',')[0][3:])
+                for t in res[0][1]["memberOf"]:
+                    tmp.append(t.decode("utf-8").split(",")[0][3:])
                 self._ldap_groups = set(tmp)
-                logger.debug("LDAP Auth groups of user: %s",",".join(self._ldap_groups))
+                logger.debug(
+                    "LDAP Auth groups of user: %s", ",".join(self._ldap_groups)
+                )
             conn.unbind()
             return login
         except ldap.INVALID_CREDENTIALS:
