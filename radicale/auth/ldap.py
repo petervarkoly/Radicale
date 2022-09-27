@@ -45,8 +45,8 @@ class Auth(auth.BaseAuth):
         self._ldap_base = configuration.get("auth", "ldap_base")
 
         # Load LDAP reader details via env first if available
-        self._ldap_reader_dn = os.environ.get("AUTH_LDAP_READER_DN") if os.environ.get("AUTH_LDAP_READER_DN", False) else configuration.get("auth", "ldap_reader_dn")
-        self._ldap_secret = os.environ.get("AUTH_LDAP_SECRET") if os.environ.get("AUTH_LDAP_SECRET", False) else configuration.get("auth", "ldap_secret")
+        self._ldap_reader_dn = os.environ.get("AUTH__LDAP_READER_DN", configuration.get("auth", "ldap_reader_dn"))
+        self._ldap_secret = os.environ.get("AUTH__LDAP_SECRET", configuration.get("auth", "ldap_secret"))
 
         self._ldap_load_groups = configuration.get("auth", "ldap_load_groups")
         self._ldap_filter = configuration.get("auth", "ldap_filter")
