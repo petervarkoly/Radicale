@@ -35,6 +35,7 @@ class Auth(auth.BaseAuth):
     _ldap_filter: str
     _ldap_load_groups: bool
     _ldap_version: 3
+    _ldap_use_ssl: False
 
     def __init__(self, configuration: config.Configuration) -> None:
         super().__init__(configuration)
@@ -52,6 +53,27 @@ class Auth(auth.BaseAuth):
         self._ldap_load_groups = configuration.get("auth", "ldap_load_groups")
         self._ldap_secret    = configuration.get("auth", "ldap_secret")
         self._ldap_filter    = configuration.get("auth", "ldap_filter")
+        try:
+            self._ldap_use_ssl   = configuration.get("auth", "ldap_use_ssl")
+        except:
+            self._ldap_use_ssl = False
+        if self._ldap_use_ssl:
+            try:
+                ldap_local_private_key_file = configuration.get("auth", "ldap_local_private_key_file")
+                ldap_local_certificate_file = configuration.get("auth", "ldap_local_certificate_file")
+                ldap_tls_version = configuration.get("auth", "ldap_tls_version")
+                ldap_tls_validate = configuration.get("auth", "ldap_tls_validate")
+                ldap_ca_certs_file = configuration.get("auth", "ldap_ca_certs_file")
+                self._tls = ldap3.Tls(
+                    local_private_key_file= configuration.get("auth", "ldap_local_private_key_file"),
+                    local_certificate_file= configuration.get("auth", "ldap_local_certificate_file"),
+                    validate= configuration.get("auth", "ldap_tls_validate"),
+                    version= configuration.get("auth", "ldap_tls_version"),
+                    ca_certs_file= configuration.get("auth", "ldap_ca_certs_file")
+                )
+            except KeyError:
+                pass
+            except:
 
     def _login2(self, login: str, password: str) -> str:
         try:
@@ -93,7 +115,7 @@ class Auth(auth.BaseAuth):
     def _login3(self, login: str, password: str) -> str:
         """Connect the server"""
         try:
-            server = ldap3.Server(self._ldap_uri)
+            server = ldap3.Server(self._ldap_uri, use_ssl=self._ldap_use_ssl)
             conn = ldap3.Connection(server, self._ldap_reader_dn, password=self._ldap_secret)
         except self.ldap3.core.exceptions.LDAPSocketOpenError:
             raise RuntimeError("Unable to reach ldap server")
