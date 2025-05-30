@@ -96,6 +96,8 @@
 <span>v2</span>
 <select style="display: none;">
 <option value="master.html">master</option>
+<option value="master.html">master</option>
+<option value="ldap3-full-featured.html">ldap3-full-featured</option>
 <option value="v3.html">v3</option>
 <option selected value="v2.html">v2</option>
 <option value="v1.html">v1</option>
@@ -457,7 +459,7 @@
 <p>Now that you have Radicale running, let's see what we can configure to make it fit your needs.</p>
 <ul>
 <li><a href="#configuration-1">What can I configure?</a></li>
-<li><a href="#authentication-and-rights">Authentication &amp; Rights.</a></li>
+<li><a href="#authentication-and-rights">Authentication & Rights.</a></li>
 <li><a href="#storage-2">Storage.</a></li>
 <li><a href="#logging-1">Logging.</a></li>
 </ul>
@@ -602,7 +604,7 @@ user2:password2</code></pre>
 </section>
 <section class="level5" id="linux-with-systemd-system-wide">
 <h5>Linux with systemd system-wide <a class="headerlink" href="#linux-with-systemd-system-wide">&para;</a></h5>
-<p>Create the <strong>radicale</strong> user and group for the Radicale service. (Run <code>useradd --system --home-dir / --shell /sbin/nologin radicale</code> as root.) The storage folder must be writable by <strong>radicale</strong>. (Run <code>mkdir -p /var/lib/radicale/collections &amp;&amp; chown -R radicale:radicale /var/lib/radicale/collections</code> as root.)</p>
+<p>Create the <strong>radicale</strong> user and group for the Radicale service. (Run <code>useradd --system --home-dir / --shell /sbin/nologin radicale</code> as root.) The storage folder must be writable by <strong>radicale</strong>. (Run <code>mkdir -p /var/lib/radicale/collections && chown -R radicale:radicale /var/lib/radicale/collections</code> as root.)</p>
 <p><strong>Security:</strong> The storage should not be readable by others. (Run <code>chmod -R o= /var/lib/radicale/collections</code> as root.)</p>
 <p>Create the file <code>/etc/systemd/system/radicale.service</code>:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb14-1"><a aria-hidden="true" href="#cb14-1" tabindex="-1"></a><span class="kw">[Unit]</span></span>
@@ -771,7 +773,7 @@ user2:password2</code></pre>
 .Radicale.lock
 .Radicale.tmp-*</code></pre>
 <p>The configuration option <code>hook</code> in the <code>storage</code> section must be set to the following command:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a aria-hidden="true" href="#cb26-1" tabindex="-1"></a><span class="fu">git</span> add <span class="at">-A</span> <span class="kw">&amp;&amp;</span> <span class="kw">(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--quiet</span> <span class="kw">||</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Changes by "</span>%<span class="er">(</span><span class="ex">user</span><span class="kw">)</span><span class="ex">s</span><span class="kw">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a aria-hidden="true" href="#cb26-1" tabindex="-1"></a><span class="fu">git</span> add <span class="at">-A</span> <span class="kw">&&</span> <span class="kw">(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--quiet</span> <span class="kw">||</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Changes by "</span>%<span class="er">(</span><span class="ex">user</span><span class="kw">)</span><span class="ex">s</span><span class="kw">)</span></span></code></pre></div>
 <p>The command gets executed after every change to the storage and commits the changes into the <strong>git</strong> repository.</p>
 </section>
 <section class="level3" id="clients">
@@ -1385,7 +1387,7 @@ user2:password2</code></pre>
 </section>
 <section class="level4" id="rights-1">
 <h4>Rights <a class="headerlink" href="#rights-1">&para;</a></h4>
-<p>In Radicale&nbsp;2.x.x, rights are managed using regex-based rules based on the login of the authenticated user and the URL of the resource. Default configurations are built in for common cases, you'll find more about this on the <a href="#authentication-and-rights">Authentication &amp; Rights</a> page.</p>
+<p>In Radicale&nbsp;2.x.x, rights are managed using regex-based rules based on the login of the authenticated user and the URL of the resource. Default configurations are built in for common cases, you'll find more about this on the <a href="#authentication-and-rights">Authentication & Rights</a> page.</p>
 <p>Other rights managers can be added by creating <a href="#plugins">plugins</a>.</p>
 </section>
 <section class="level4" id="versioning-1">
@@ -1472,7 +1474,7 @@ user2:password2</code></pre>
 <li><a href="http://software.opensuse.org/package/Radicale?search_term=radicale">openSUSE</a> by &Aacute;kos Sz&odblac;ts and Rueckert</li>
 <li><a href="http://code.activestate.com/pypm/radicale/">PyPM</a></li>
 <li><a href="http://schoepfer.info/slackware.xhtml#packages-network">Slackware</a> by Johannes Sch&ouml;pfer</li>
-<li><a href="http://packages.trisquel.info/search?searchon=names&amp;keywords=radicale">Trisquel</a></li>
+<li><a href="http://packages.trisquel.info/search?searchon=names&keywords=radicale">Trisquel</a></li>
 <li><a href="http://packages.ubuntu.com/radicale">Ubuntu</a> by the MOTU and Jonas Smedegaard</li>
 </ul>
 <p>Radicale is also <a href="https://cloudron.io/button.html?app=org.radicale.cloudronapp">available on Cloudron</a> and has a Dockerfile.</p>

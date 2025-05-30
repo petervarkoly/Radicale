@@ -96,6 +96,8 @@
 <span>master</span>
 <select style="display: none;">
 <option selected value="master.html">master</option>
+<option selected value="master.html">master</option>
+<option value="ldap3-full-featured.html">ldap3-full-featured</option>
 <option value="v3.html">v3</option>
 <option value="v2.html">v2</option>
 <option value="v1.html">v1</option>
@@ -171,15 +173,19 @@
 <li class="level4"><a href="#web">web</a></li>
 <li class="level4"><a href="#logging">logging</a></li>
 <li class="level4"><a href="#headers">headers</a></li>
+<li class="level4"><a href="#hook-1">hook</a></li>
+<li class="level4"><a href="#reporting">reporting</a></li>
 </ul></li>
-<li class="level3"><a href="#supported-clients">Supported Clients</a>
+</ul></li>
+<li class="level2"><a href="#supported-clients">Supported Clients</a>
 <ul>
 <li class="level4"><a href="#davx⁵">DAVx⁵</a></li>
-<li class="level4"><a href="#gnome-calendar-contacts-and-evolution">GNOME Calendar, Contacts and Evolution</a></li>
+<li class="level4"><a href="#onecalendar">OneCalendar</a></li>
+<li class="level4"><a href="#gnome-calendar-contacts">GNOME Calendar, Contacts</a></li>
+<li class="level4"><a href="#evolution">Evolution</a></li>
 <li class="level4"><a href="#thunderbird">Thunderbird</a></li>
 <li class="level4"><a href="#infcloud-caldavzap-and-carddavmate">InfCloud, CalDavZAP and CardDavMATE</a></li>
 <li class="level4"><a href="#command-line">Command line</a></li>
-</ul></li>
 <li class="level3"><a href="#authentication-and-rights">Authentication and Rights</a></li>
 <li class="level3"><a href="#storage-2">Storage</a>
 <ul>
@@ -187,7 +193,7 @@
 <li class="level4"><a href="#locking">Locking</a></li>
 <li class="level4"><a href="#manually-creating-collections">Manually creating collections</a></li>
 </ul></li>
-<li class="level3"><a href="#logging-1">Logging</a></li>
+<li class="level3"><a href="#logging-overview">Logging overview</a></li>
 <li class="level3"><a href="#architecture">Architecture</a>
 <ul>
 <li class="level4"><a href="#protocol-overview">Protocol overview</a></li>
@@ -204,7 +210,6 @@
 </ul></li>
 <li class="level2"><a href="#contribute">Contribute</a>
 <ul>
-<li class="level4"><a href="#chat-with-us-on-irc">Chat with Us on IRC</a></li>
 <li class="level4"><a href="#report-bugs">Report Bugs</a></li>
 <li class="level4"><a href="#hack">Hack</a></li>
 <li class="level4"><a href="#documentation-2">Documentation</a></li>
@@ -246,15 +251,19 @@
 </section>
 <section class="level4" id="installation">
 <h4>Installation <a class="headerlink" href="#installation">&para;</a></h4>
-<p>Radicale is really easy to install and works out-of-the-box.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span>
-<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> radicale <span class="at">--storage-filesystem-folder</span><span class="op">=</span>~/.var/lib/radicale/collections</span></code></pre></div>
-<p>When the server is launched, open <a href="http://localhost:5232">http://localhost:5232</a> in your browser! You can login with any username and password.</p>
-<p>Want more? Check the <a href="#tutorials">tutorials</a> and the <a href="#documentation-1">documentation</a>.</p>
+<p>Check</p>
+<ul>
+<li><a href="#tutorials">Tutorials</a></li>
+<li><a href="#documentation-1">Documentation</a></li>
+<li><a href="https://github.com/Kozea/Radicale/wiki">Wiki on GitHub</a></li>
+<li><a href="https://github.com/Kozea/Radicale/discussions">Disussions on GitHub</a></li>
+<li><a href="https://github.com/Kozea/Radicale/issues?q=is%3Aissue">Open and already Closed Issues on GitHub</a></li>
+</ul>
+<p>Hint: instead of downloading from PyPI look for packages provided by used <a href="#linux-distribution-packages">distribution</a>, they contain also startup scripts to run daemonized.</p>
 </section>
 <section class="level4" id="whats-new">
 <h4>What's New? <a class="headerlink" href="#whats-new">&para;</a></h4>
-<p>Read the <a href="https://github.com/Kozea/Radicale/blob/master/CHANGELOG.md">changelog on GitHub.</a></p>
+<p>Read the <a href="https://github.com/Kozea/Radicale/blob/master/CHANGELOG.md">Changelog on GitHub</a>.</p>
 </section>
 </section>
 <section class="level2" id="tutorials">
@@ -262,25 +271,47 @@
 <section class="level3" id="simple-5-minute-setup">
 <h3>Simple 5-minute setup <a class="headerlink" href="#simple-5-minute-setup">&para;</a></h3>
 <p>You want to try Radicale but only have 5 minutes free in your calendar? Let's go right now and play a bit with Radicale!</p>
-<p>When everything works, you can get a <a href="#supported-clients">client</a> and start creating calendars and address books. The server <strong>only</strong> binds to localhost (is <strong>not</strong> reachable over the network) and you can log in with any username and password. If Radicale fits your needs, it may be time for <a href="#basic-configuration">some basic configuration</a>.</p>
+<p>When everything works, you can get a <a href="#supported-clients">client</a> and start creating calendars and address books. The server, configured with settings from this section, only binds to localhost (is not reachable over the network) and you can log in with any user name and password. When everything works, you may get a local client and start creating calendars and address books. If Radicale fits your needs, it may be time for some <a href="#basic-configuration">basic configuration</a> to support remote clients and desired authentication type.</p>
 <p>Follow one of the chapters below depending on your operating system.</p>
 <section class="level4" id="linux--bsd">
 <h4>Linux / *BSD <a class="headerlink" href="#linux--bsd">&para;</a></h4>
-<p>First, make sure that <strong>python</strong> 3.5 or later (<strong>python</strong> &ge; 3.6 is recommended) and <strong>pip</strong> are installed. On most distributions it should be enough to install the package <code>python3-pip</code>.</p>
-<p>Then open a console and type:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class="co"># Run the following command as root or</span></span>
-<span id="cb2-2"><a aria-hidden="true" href="#cb2-2" tabindex="-1"></a><span class="co"># add the --user argument to only install for the current user</span></span>
-<span id="cb2-3"><a aria-hidden="true" href="#cb2-3" tabindex="-1"></a><span class="ex">$</span> python3 <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span>
-<span id="cb2-4"><a aria-hidden="true" href="#cb2-4" tabindex="-1"></a><span class="ex">$</span> python3 <span class="at">-m</span> radicale <span class="at">--storage-filesystem-folder</span><span class="op">=</span>~/.var/lib/radicale/collections</span></code></pre></div>
-<p>Victory! Open <a href="http://localhost:5232">http://localhost:5232</a> in your browser! You can log in with any username and password.</p>
+<p>First, make sure that <strong>python</strong> 3.9 or later and <strong>pip</strong> are installed. On most distributions it should be enough to install the package <code>python3-pip</code>.</p>
+<section class="level5" id="as-normal-user">
+<h5>as normal user <a class="headerlink" href="#as-normal-user">&para;</a></h5>
+<p>Recommended only for testing - open a console and type:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="co"># Run the following command to only install for the current user</span></span>
+<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--user</span> <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span></code></pre></div>
+<p>If <em>install</em> is not working and instead <code>error: externally-managed-environment</code> is displayed, create and activate a virtual environment in advance</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv ~/venv</span>
+<span id="cb2-2"><a aria-hidden="true" href="#cb2-2" tabindex="-1"></a><span class="bu">source</span> ~/venv/bin/activate</span></code></pre></div>
+<p>and try to install with</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span></code></pre></div>
+<p>Start the service manually, data is stored only for the current user</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" href="#cb4-1" tabindex="-1"></a><span class="co"># Start, data is stored for the current user only</span></span>
+<span id="cb4-2"><a aria-hidden="true" href="#cb4-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> radicale <span class="at">--storage-filesystem-folder</span><span class="op">=</span>~/.var/lib/radicale/collections <span class="at">--auth-type</span> none</span></code></pre></div>
+</section>
+<section class="level5" id="as-system-user-or-as-root">
+<h5>as system user (or as root) <a class="headerlink" href="#as-system-user-or-as-root">&para;</a></h5>
+<p>Alternative one can install and run as system user or as root (not recommended)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" href="#cb5-1" tabindex="-1"></a><span class="co"># Run the following command as root (not required)</span></span>
+<span id="cb5-2"><a aria-hidden="true" href="#cb5-2" tabindex="-1"></a><span class="co"># or non-root system user (can require --user in case of dependencies are not available system-wide and/or virtual environment)</span></span>
+<span id="cb5-3"><a aria-hidden="true" href="#cb5-3" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span></code></pre></div>
+<p>Start the service manually, data is stored in a system folder</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="co"># Start, data is stored in a system folder (requires write permissions to /var/lib/radicale/collections)</span></span>
+<span id="cb6-2"><a aria-hidden="true" href="#cb6-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> radicale <span class="at">--storage-filesystem-folder</span><span class="op">=</span>/var/lib/radicale/collections <span class="at">--auth-type</span> none</span></code></pre></div>
+</section>
 </section>
 <section class="level4" id="windows">
 <h4>Windows <a class="headerlink" href="#windows">&para;</a></h4>
 <p>The first step is to install Python. Go to <a href="https://python.org">python.org</a> and download the latest version of Python 3. Then run the installer. On the first window of the installer, check the "Add Python to PATH" box and click on "Install now". Wait a couple of minutes, it's done!</p>
 <p>Launch a command prompt and type:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a>python <span class="op">-</span>m pip install <span class="op">--</span>upgrade https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>Kozea<span class="op">/</span>Radicale<span class="op">/</span>archive<span class="op">/</span>master<span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span></span>
-<span id="cb3-2"><a aria-hidden="true" href="#cb3-2" tabindex="-1"></a>python <span class="op">-</span>m radicale <span class="op">--</span>storage<span class="op">-</span>filesystem<span class="op">-</span>folder<span class="op">=~/</span>radicale<span class="op">/</span>collections</span></code></pre></div>
-<p>Victory! Open <a href="http://localhost:5232">http://localhost:5232</a> in your browser! You can log in with any username and password.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a>python <span class="op">-</span>m pip install <span class="op">--</span>upgrade https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>Kozea<span class="op">/</span>Radicale<span class="op">/</span>archive<span class="op">/</span>master<span class="op">.</span><span class="fu">tar</span><span class="op">.</span><span class="fu">gz</span></span>
+<span id="cb7-2"><a aria-hidden="true" href="#cb7-2" tabindex="-1"></a>python <span class="op">-</span>m radicale <span class="op">--</span>storage<span class="op">-</span>filesystem<span class="op">-</span>folder<span class="op">=~/</span>radicale<span class="op">/</span>collections <span class="op">--</span>auth<span class="op">-</span>type none</span></code></pre></div>
+<section class="level5" id="common">
+<h5>Common <a class="headerlink" href="#common">&para;</a></h5>
+<p>Victory! Open <a href="http://localhost:5232">http://localhost:5232</a> in your browser! You can log in with any username and password (no authentication is required as long as not proper configured - INSECURE).</p>
+<p>Just note that default configuration for security reason binds the server to <code>localhost</code> (IPv4: <code>127.0.0.1</code>, IPv6: <code>::1</code>). See <a href="#addresses">Addresses</a> and <a href="#server">Configuration/Server</a> for more.</p>
+</section>
 </section>
 </section>
 <section class="level3" id="basic-configuration">
@@ -296,20 +327,21 @@
 <section class="level5" id="the-secure-way">
 <h5>The secure way <a class="headerlink" href="#the-secure-way">&para;</a></h5>
 <p>The <code>users</code> file can be created and managed with <a href="https://httpd.apache.org/docs/current/programs/htpasswd.html">htpasswd</a>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" href="#cb4-1" tabindex="-1"></a><span class="co"># Create a new htpasswd file with the user "user1"</span></span>
-<span id="cb4-2"><a aria-hidden="true" href="#cb4-2" tabindex="-1"></a><span class="ex">$</span> htpasswd <span class="at">-c</span> /path/to/users user1</span>
-<span id="cb4-3"><a aria-hidden="true" href="#cb4-3" tabindex="-1"></a><span class="ex">New</span> password:</span>
-<span id="cb4-4"><a aria-hidden="true" href="#cb4-4" tabindex="-1"></a><span class="ex">Re-type</span> new password:</span>
-<span id="cb4-5"><a aria-hidden="true" href="#cb4-5" tabindex="-1"></a><span class="co"># Add another user</span></span>
-<span id="cb4-6"><a aria-hidden="true" href="#cb4-6" tabindex="-1"></a><span class="ex">$</span> htpasswd /path/to/users user2</span>
-<span id="cb4-7"><a aria-hidden="true" href="#cb4-7" tabindex="-1"></a><span class="ex">New</span> password:</span>
-<span id="cb4-8"><a aria-hidden="true" href="#cb4-8" tabindex="-1"></a><span class="ex">Re-type</span> new password:</span></code></pre></div>
+<p>Note: some OS contain unpatched <code>htpasswd</code> (&lt; 2.4.59) without supporting SHA-256 or SHA-512 (e.g. Ubuntu LTS 22), in this case use '-B' for "bcrypt" hash method or stay with insecure MD5 (default) or SHA-1 ('-s').</p>
+<p>Note that support of SHA-256 or SHA-512 was introduced with 3.1.9</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a><span class="co"># Create a new htpasswd file with the user "user1" using SHA-512 as hash method</span></span>
+<span id="cb8-2"><a aria-hidden="true" href="#cb8-2" tabindex="-1"></a><span class="ex">$</span> htpasswd <span class="at">-5</span> <span class="at">-c</span> /path/to/users user1</span>
+<span id="cb8-3"><a aria-hidden="true" href="#cb8-3" tabindex="-1"></a><span class="ex">New</span> password:</span>
+<span id="cb8-4"><a aria-hidden="true" href="#cb8-4" tabindex="-1"></a><span class="ex">Re-type</span> new password:</span>
+<span id="cb8-5"><a aria-hidden="true" href="#cb8-5" tabindex="-1"></a><span class="co"># Add another user</span></span>
+<span id="cb8-6"><a aria-hidden="true" href="#cb8-6" tabindex="-1"></a><span class="ex">$</span> htpasswd <span class="at">-5</span> /path/to/users user2</span>
+<span id="cb8-7"><a aria-hidden="true" href="#cb8-7" tabindex="-1"></a><span class="ex">New</span> password:</span>
+<span id="cb8-8"><a aria-hidden="true" href="#cb8-8" tabindex="-1"></a><span class="ex">Re-type</span> new password:</span></code></pre></div>
 <p>Authentication can be enabled with the following configuration:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb5-1"><a aria-hidden="true" href="#cb5-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
-<span id="cb5-2"><a aria-hidden="true" href="#cb5-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
-<span id="cb5-3"><a aria-hidden="true" href="#cb5-3" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> /path/to/users</span></span>
-<span id="cb5-4"><a aria-hidden="true" href="#cb5-4" tabindex="-1"></a><span class="co"># encryption method used in the htpasswd file</span></span>
-<span id="cb5-5"><a aria-hidden="true" href="#cb5-5" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> md5</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb9-1"><a aria-hidden="true" href="#cb9-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
+<span id="cb9-2"><a aria-hidden="true" href="#cb9-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
+<span id="cb9-3"><a aria-hidden="true" href="#cb9-3" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> /path/to/users</span></span>
+<span id="cb9-4"><a aria-hidden="true" href="#cb9-4" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> autodetect</span></span></code></pre></div>
 </section>
 <section class="level5" id="the-simple-but-insecure-way">
 <h5>The simple but insecure way <a class="headerlink" href="#the-simple-but-insecure-way">&para;</a></h5>
@@ -317,24 +349,24 @@
 <pre class="htpasswd"><code>user1:password1
 user2:password2</code></pre>
 <p>Authentication can be enabled with the following configuration:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
-<span id="cb7-2"><a aria-hidden="true" href="#cb7-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
-<span id="cb7-3"><a aria-hidden="true" href="#cb7-3" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> /path/to/users</span></span>
-<span id="cb7-4"><a aria-hidden="true" href="#cb7-4" tabindex="-1"></a><span class="co"># encryption method used in the htpasswd file</span></span>
-<span id="cb7-5"><a aria-hidden="true" href="#cb7-5" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> plain</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb11-1"><a aria-hidden="true" href="#cb11-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
+<span id="cb11-2"><a aria-hidden="true" href="#cb11-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
+<span id="cb11-3"><a aria-hidden="true" href="#cb11-3" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> /path/to/users</span></span>
+<span id="cb11-4"><a aria-hidden="true" href="#cb11-4" tabindex="-1"></a><span class="co"># encryption method used in the htpasswd file</span></span>
+<span id="cb11-5"><a aria-hidden="true" href="#cb11-5" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> plain</span></span></code></pre></div>
 </section>
 </section>
 <section class="level4" id="addresses">
 <h4>Addresses <a class="headerlink" href="#addresses">&para;</a></h4>
 <p>The default configuration binds the server to localhost. It can't be reached from other computers. This can be changed with the following configuration options (IPv4 and IPv6):</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a><span class="kw">[server]</span></span>
-<span id="cb8-2"><a aria-hidden="true" href="#cb8-2" tabindex="-1"></a><span class="dt">hosts </span><span class="ot">=</span><span class="st"> 0.0.0.0:5232, [::]:5232</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb12-1"><a aria-hidden="true" href="#cb12-1" tabindex="-1"></a><span class="kw">[server]</span></span>
+<span id="cb12-2"><a aria-hidden="true" href="#cb12-2" tabindex="-1"></a><span class="dt">hosts </span><span class="ot">=</span><span class="st"> 0.0.0.0:5232, [::]:5232</span></span></code></pre></div>
 </section>
 <section class="level4" id="storage">
 <h4>Storage <a class="headerlink" href="#storage">&para;</a></h4>
 <p>Data is stored in the folder <code>/var/lib/radicale/collections</code>. The path can be changed with the following configuration:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb9-1"><a aria-hidden="true" href="#cb9-1" tabindex="-1"></a><span class="kw">[storage]</span></span>
-<span id="cb9-2"><a aria-hidden="true" href="#cb9-2" tabindex="-1"></a><span class="dt">filesystem_folder </span><span class="ot">=</span><span class="st"> /path/to/storage</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb13-1"><a aria-hidden="true" href="#cb13-1" tabindex="-1"></a><span class="kw">[storage]</span></span>
+<span id="cb13-2"><a aria-hidden="true" href="#cb13-2" tabindex="-1"></a><span class="dt">filesystem_folder </span><span class="ot">=</span><span class="st"> /path/to/storage</span></span></code></pre></div>
 <blockquote>
 <p><strong>Security:</strong> The storage folder should not be readable by unauthorized users. Otherwise, they can read the calendar data and lock the storage. You can find OS dependent instructions in the <a href="#running-as-a-service">Running as a service</a> section.</p>
 </blockquote>
@@ -342,16 +374,16 @@ user2:password2</code></pre>
 <section class="level4" id="limits">
 <h4>Limits <a class="headerlink" href="#limits">&para;</a></h4>
 <p>Radicale enforces limits on the maximum number of parallel connections, the maximum file size (important for contacts with big photos) and the rate of incorrect authentication attempts. Connections are terminated after a timeout. The default values should be fine for most scenarios.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb10-1"><a aria-hidden="true" href="#cb10-1" tabindex="-1"></a><span class="kw">[server]</span></span>
-<span id="cb10-2"><a aria-hidden="true" href="#cb10-2" tabindex="-1"></a><span class="dt">max_connections </span><span class="ot">=</span><span class="st"> </span><span class="dv">20</span></span>
-<span id="cb10-3"><a aria-hidden="true" href="#cb10-3" tabindex="-1"></a><span class="co"># 100 Megabyte</span></span>
-<span id="cb10-4"><a aria-hidden="true" href="#cb10-4" tabindex="-1"></a><span class="dt">max_content_length </span><span class="ot">=</span><span class="st"> </span><span class="dv">100000000</span></span>
-<span id="cb10-5"><a aria-hidden="true" href="#cb10-5" tabindex="-1"></a><span class="co"># 30 seconds</span></span>
-<span id="cb10-6"><a aria-hidden="true" href="#cb10-6" tabindex="-1"></a><span class="dt">timeout </span><span class="ot">=</span><span class="st"> </span><span class="dv">30</span></span>
-<span id="cb10-7"><a aria-hidden="true" href="#cb10-7" tabindex="-1"></a></span>
-<span id="cb10-8"><a aria-hidden="true" href="#cb10-8" tabindex="-1"></a><span class="kw">[auth]</span></span>
-<span id="cb10-9"><a aria-hidden="true" href="#cb10-9" tabindex="-1"></a><span class="co"># Average delay after failed login attempts in seconds</span></span>
-<span id="cb10-10"><a aria-hidden="true" href="#cb10-10" tabindex="-1"></a><span class="dt">delay </span><span class="ot">=</span><span class="st"> </span><span class="dv">1</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb14-1"><a aria-hidden="true" href="#cb14-1" tabindex="-1"></a><span class="kw">[server]</span></span>
+<span id="cb14-2"><a aria-hidden="true" href="#cb14-2" tabindex="-1"></a><span class="dt">max_connections </span><span class="ot">=</span><span class="st"> </span><span class="dv">20</span></span>
+<span id="cb14-3"><a aria-hidden="true" href="#cb14-3" tabindex="-1"></a><span class="co"># 100 Megabyte</span></span>
+<span id="cb14-4"><a aria-hidden="true" href="#cb14-4" tabindex="-1"></a><span class="dt">max_content_length </span><span class="ot">=</span><span class="st"> </span><span class="dv">100000000</span></span>
+<span id="cb14-5"><a aria-hidden="true" href="#cb14-5" tabindex="-1"></a><span class="co"># 30 seconds</span></span>
+<span id="cb14-6"><a aria-hidden="true" href="#cb14-6" tabindex="-1"></a><span class="dt">timeout </span><span class="ot">=</span><span class="st"> </span><span class="dv">30</span></span>
+<span id="cb14-7"><a aria-hidden="true" href="#cb14-7" tabindex="-1"></a></span>
+<span id="cb14-8"><a aria-hidden="true" href="#cb14-8" tabindex="-1"></a><span class="kw">[auth]</span></span>
+<span id="cb14-9"><a aria-hidden="true" href="#cb14-9" tabindex="-1"></a><span class="co"># Average delay after failed login attempts in seconds</span></span>
+<span id="cb14-10"><a aria-hidden="true" href="#cb14-10" tabindex="-1"></a><span class="dt">delay </span><span class="ot">=</span><span class="st"> </span><span class="dv">1</span></span></code></pre></div>
 </section>
 </section>
 <section class="level3" id="running-as-a-service">
@@ -359,68 +391,72 @@ user2:password2</code></pre>
 <p>The method to run Radicale as a service depends on your host operating system. Follow one of the chapters below depending on your operating system and requirements.</p>
 <section class="level4" id="linux-with-systemd-system-wide">
 <h4>Linux with systemd system-wide <a class="headerlink" href="#linux-with-systemd-system-wide">&para;</a></h4>
-<p>Create the <strong>radicale</strong> user and group for the Radicale service. (Run <code>useradd --system --user-group --home-dir / --shell /sbin/nologin radicale</code> as root.) The storage folder must be writable by <strong>radicale</strong>. (Run <code>mkdir -p /var/lib/radicale/collections &amp;&amp; chown -R radicale:radicale /var/lib/radicale/collections</code> as root.)</p>
+<p>Recommendation: check support by <a href="#linux-distribution-packages">Linux Distribution Packages</a> instead of manual setup / initial configuration.</p>
+<p>Create the <strong>radicale</strong> user and group for the Radicale service. (Run <code>useradd --system --user-group --home-dir / --shell /sbin/nologin radicale</code> as root.) The storage folder must be writable by <strong>radicale</strong>. (Run <code>mkdir -p /var/lib/radicale/collections && chown -R radicale:radicale /var/lib/radicale/collections</code> as root.)</p>
+<p>If a dedicated cache folder is configured (see option 'storage' -&gt; 'filesystem_cache_folder'), it also must be also writable by <strong>radicale</strong>. (Run <code>mkdir -p /var/cache/radicale && chown -R radicale:radicale /var/cache/radicale</code> as root.)</p>
 <blockquote>
 <p><strong>Security:</strong> The storage should not be readable by others. (Run <code>chmod -R o= /var/lib/radicale/collections</code> as root.)</p>
 </blockquote>
 <p>Create the file <code>/etc/systemd/system/radicale.service</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb11-1"><a aria-hidden="true" href="#cb11-1" tabindex="-1"></a><span class="kw">[Unit]</span></span>
-<span id="cb11-2"><a aria-hidden="true" href="#cb11-2" tabindex="-1"></a><span class="dt">Description</span><span class="ot">=</span><span class="st">A simple CalDAV (calendar) and CardDAV (contact) server</span></span>
-<span id="cb11-3"><a aria-hidden="true" href="#cb11-3" tabindex="-1"></a><span class="dt">After</span><span class="ot">=</span><span class="st">network.target</span></span>
-<span id="cb11-4"><a aria-hidden="true" href="#cb11-4" tabindex="-1"></a><span class="dt">Requires</span><span class="ot">=</span><span class="st">network.target</span></span>
-<span id="cb11-5"><a aria-hidden="true" href="#cb11-5" tabindex="-1"></a></span>
-<span id="cb11-6"><a aria-hidden="true" href="#cb11-6" tabindex="-1"></a><span class="kw">[Service]</span></span>
-<span id="cb11-7"><a aria-hidden="true" href="#cb11-7" tabindex="-1"></a><span class="dt">ExecStart</span><span class="ot">=</span><span class="st">/usr/bin/env python3 -m radicale</span></span>
-<span id="cb11-8"><a aria-hidden="true" href="#cb11-8" tabindex="-1"></a><span class="dt">Restart</span><span class="ot">=</span><span class="st">on-failure</span></span>
-<span id="cb11-9"><a aria-hidden="true" href="#cb11-9" tabindex="-1"></a><span class="dt">User</span><span class="ot">=</span><span class="st">radicale</span></span>
-<span id="cb11-10"><a aria-hidden="true" href="#cb11-10" tabindex="-1"></a><span class="co"># Deny other users access to the calendar data</span></span>
-<span id="cb11-11"><a aria-hidden="true" href="#cb11-11" tabindex="-1"></a><span class="dt">UMask</span><span class="ot">=</span><span class="dv">0027</span></span>
-<span id="cb11-12"><a aria-hidden="true" href="#cb11-12" tabindex="-1"></a><span class="co"># Optional security settings</span></span>
-<span id="cb11-13"><a aria-hidden="true" href="#cb11-13" tabindex="-1"></a><span class="dt">PrivateTmp</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-14"><a aria-hidden="true" href="#cb11-14" tabindex="-1"></a><span class="dt">ProtectSystem</span><span class="ot">=</span><span class="st">strict</span></span>
-<span id="cb11-15"><a aria-hidden="true" href="#cb11-15" tabindex="-1"></a><span class="dt">ProtectHome</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-16"><a aria-hidden="true" href="#cb11-16" tabindex="-1"></a><span class="dt">PrivateDevices</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-17"><a aria-hidden="true" href="#cb11-17" tabindex="-1"></a><span class="dt">ProtectKernelTunables</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-18"><a aria-hidden="true" href="#cb11-18" tabindex="-1"></a><span class="dt">ProtectKernelModules</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-19"><a aria-hidden="true" href="#cb11-19" tabindex="-1"></a><span class="dt">ProtectControlGroups</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-20"><a aria-hidden="true" href="#cb11-20" tabindex="-1"></a><span class="dt">NoNewPrivileges</span><span class="ot">=</span><span class="kw">true</span></span>
-<span id="cb11-21"><a aria-hidden="true" href="#cb11-21" tabindex="-1"></a><span class="dt">ReadWritePaths</span><span class="ot">=</span><span class="st">/var/lib/radicale/collections</span></span>
-<span id="cb11-22"><a aria-hidden="true" href="#cb11-22" tabindex="-1"></a></span>
-<span id="cb11-23"><a aria-hidden="true" href="#cb11-23" tabindex="-1"></a><span class="kw">[Install]</span></span>
-<span id="cb11-24"><a aria-hidden="true" href="#cb11-24" tabindex="-1"></a><span class="dt">WantedBy</span><span class="ot">=</span><span class="st">multi-user.target</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb15-1"><a aria-hidden="true" href="#cb15-1" tabindex="-1"></a><span class="kw">[Unit]</span></span>
+<span id="cb15-2"><a aria-hidden="true" href="#cb15-2" tabindex="-1"></a><span class="dt">Description</span><span class="ot">=</span><span class="st">A simple CalDAV (calendar) and CardDAV (contact) server</span></span>
+<span id="cb15-3"><a aria-hidden="true" href="#cb15-3" tabindex="-1"></a><span class="dt">After</span><span class="ot">=</span><span class="st">network.target</span></span>
+<span id="cb15-4"><a aria-hidden="true" href="#cb15-4" tabindex="-1"></a><span class="dt">Requires</span><span class="ot">=</span><span class="st">network.target</span></span>
+<span id="cb15-5"><a aria-hidden="true" href="#cb15-5" tabindex="-1"></a></span>
+<span id="cb15-6"><a aria-hidden="true" href="#cb15-6" tabindex="-1"></a><span class="kw">[Service]</span></span>
+<span id="cb15-7"><a aria-hidden="true" href="#cb15-7" tabindex="-1"></a><span class="dt">ExecStart</span><span class="ot">=</span><span class="st">/usr/bin/env python3 -m radicale</span></span>
+<span id="cb15-8"><a aria-hidden="true" href="#cb15-8" tabindex="-1"></a><span class="dt">Restart</span><span class="ot">=</span><span class="st">on-failure</span></span>
+<span id="cb15-9"><a aria-hidden="true" href="#cb15-9" tabindex="-1"></a><span class="dt">User</span><span class="ot">=</span><span class="st">radicale</span></span>
+<span id="cb15-10"><a aria-hidden="true" href="#cb15-10" tabindex="-1"></a><span class="co"># Deny other users access to the calendar data</span></span>
+<span id="cb15-11"><a aria-hidden="true" href="#cb15-11" tabindex="-1"></a><span class="dt">UMask</span><span class="ot">=</span><span class="dv">0027</span></span>
+<span id="cb15-12"><a aria-hidden="true" href="#cb15-12" tabindex="-1"></a><span class="co"># Optional security settings</span></span>
+<span id="cb15-13"><a aria-hidden="true" href="#cb15-13" tabindex="-1"></a><span class="dt">PrivateTmp</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-14"><a aria-hidden="true" href="#cb15-14" tabindex="-1"></a><span class="dt">ProtectSystem</span><span class="ot">=</span><span class="st">strict</span></span>
+<span id="cb15-15"><a aria-hidden="true" href="#cb15-15" tabindex="-1"></a><span class="dt">ProtectHome</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-16"><a aria-hidden="true" href="#cb15-16" tabindex="-1"></a><span class="dt">PrivateDevices</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-17"><a aria-hidden="true" href="#cb15-17" tabindex="-1"></a><span class="dt">ProtectKernelTunables</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-18"><a aria-hidden="true" href="#cb15-18" tabindex="-1"></a><span class="dt">ProtectKernelModules</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-19"><a aria-hidden="true" href="#cb15-19" tabindex="-1"></a><span class="dt">ProtectControlGroups</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-20"><a aria-hidden="true" href="#cb15-20" tabindex="-1"></a><span class="dt">NoNewPrivileges</span><span class="ot">=</span><span class="kw">true</span></span>
+<span id="cb15-21"><a aria-hidden="true" href="#cb15-21" tabindex="-1"></a><span class="dt">ReadWritePaths</span><span class="ot">=</span><span class="st">/var/lib/radicale/</span></span>
+<span id="cb15-22"><a aria-hidden="true" href="#cb15-22" tabindex="-1"></a><span class="co"># Replace with following in case of dedicated cache folder should be used</span></span>
+<span id="cb15-23"><a aria-hidden="true" href="#cb15-23" tabindex="-1"></a><span class="co">#ReadWritePaths=/var/lib/radicale/ /var/cache/radicale/</span></span>
+<span id="cb15-24"><a aria-hidden="true" href="#cb15-24" tabindex="-1"></a></span>
+<span id="cb15-25"><a aria-hidden="true" href="#cb15-25" tabindex="-1"></a><span class="kw">[Install]</span></span>
+<span id="cb15-26"><a aria-hidden="true" href="#cb15-26" tabindex="-1"></a><span class="dt">WantedBy</span><span class="ot">=</span><span class="st">multi-user.target</span></span></code></pre></div>
 <p>Radicale will load the configuration file from <code>/etc/radicale/config</code>.</p>
 <p>To enable and manage the service run:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a aria-hidden="true" href="#cb12-1" tabindex="-1"></a><span class="co"># Enable the service</span></span>
-<span id="cb12-2"><a aria-hidden="true" href="#cb12-2" tabindex="-1"></a><span class="ex">$</span> systemctl enable radicale</span>
-<span id="cb12-3"><a aria-hidden="true" href="#cb12-3" tabindex="-1"></a><span class="co"># Start the service</span></span>
-<span id="cb12-4"><a aria-hidden="true" href="#cb12-4" tabindex="-1"></a><span class="ex">$</span> systemctl start radicale</span>
-<span id="cb12-5"><a aria-hidden="true" href="#cb12-5" tabindex="-1"></a><span class="co"># Check the status of the service</span></span>
-<span id="cb12-6"><a aria-hidden="true" href="#cb12-6" tabindex="-1"></a><span class="ex">$</span> systemctl status radicale</span>
-<span id="cb12-7"><a aria-hidden="true" href="#cb12-7" tabindex="-1"></a><span class="co"># View all log messages</span></span>
-<span id="cb12-8"><a aria-hidden="true" href="#cb12-8" tabindex="-1"></a><span class="ex">$</span> journalctl <span class="at">--unit</span> radicale.service</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a aria-hidden="true" href="#cb16-1" tabindex="-1"></a><span class="co"># Enable the service</span></span>
+<span id="cb16-2"><a aria-hidden="true" href="#cb16-2" tabindex="-1"></a><span class="ex">$</span> systemctl enable radicale</span>
+<span id="cb16-3"><a aria-hidden="true" href="#cb16-3" tabindex="-1"></a><span class="co"># Start the service</span></span>
+<span id="cb16-4"><a aria-hidden="true" href="#cb16-4" tabindex="-1"></a><span class="ex">$</span> systemctl start radicale</span>
+<span id="cb16-5"><a aria-hidden="true" href="#cb16-5" tabindex="-1"></a><span class="co"># Check the status of the service</span></span>
+<span id="cb16-6"><a aria-hidden="true" href="#cb16-6" tabindex="-1"></a><span class="ex">$</span> systemctl status radicale</span>
+<span id="cb16-7"><a aria-hidden="true" href="#cb16-7" tabindex="-1"></a><span class="co"># View all log messages</span></span>
+<span id="cb16-8"><a aria-hidden="true" href="#cb16-8" tabindex="-1"></a><span class="ex">$</span> journalctl <span class="at">--unit</span> radicale.service</span></code></pre></div>
 </section>
 <section class="level4" id="linux-with-systemd-as-a-user">
 <h4>Linux with systemd as a user <a class="headerlink" href="#linux-with-systemd-as-a-user">&para;</a></h4>
 <p>Create the file <code>~/.config/systemd/user/radicale.service</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb13-1"><a aria-hidden="true" href="#cb13-1" tabindex="-1"></a><span class="kw">[Unit]</span></span>
-<span id="cb13-2"><a aria-hidden="true" href="#cb13-2" tabindex="-1"></a><span class="dt">Description</span><span class="ot">=</span><span class="st">A simple CalDAV (calendar) and CardDAV (contact) server</span></span>
-<span id="cb13-3"><a aria-hidden="true" href="#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a aria-hidden="true" href="#cb13-4" tabindex="-1"></a><span class="kw">[Service]</span></span>
-<span id="cb13-5"><a aria-hidden="true" href="#cb13-5" tabindex="-1"></a><span class="dt">ExecStart</span><span class="ot">=</span><span class="st">/usr/bin/env python3 -m radicale</span></span>
-<span id="cb13-6"><a aria-hidden="true" href="#cb13-6" tabindex="-1"></a><span class="dt">Restart</span><span class="ot">=</span><span class="st">on-failure</span></span>
-<span id="cb13-7"><a aria-hidden="true" href="#cb13-7" tabindex="-1"></a></span>
-<span id="cb13-8"><a aria-hidden="true" href="#cb13-8" tabindex="-1"></a><span class="kw">[Install]</span></span>
-<span id="cb13-9"><a aria-hidden="true" href="#cb13-9" tabindex="-1"></a><span class="dt">WantedBy</span><span class="ot">=</span><span class="st">default.target</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb17-1"><a aria-hidden="true" href="#cb17-1" tabindex="-1"></a><span class="kw">[Unit]</span></span>
+<span id="cb17-2"><a aria-hidden="true" href="#cb17-2" tabindex="-1"></a><span class="dt">Description</span><span class="ot">=</span><span class="st">A simple CalDAV (calendar) and CardDAV (contact) server</span></span>
+<span id="cb17-3"><a aria-hidden="true" href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a aria-hidden="true" href="#cb17-4" tabindex="-1"></a><span class="kw">[Service]</span></span>
+<span id="cb17-5"><a aria-hidden="true" href="#cb17-5" tabindex="-1"></a><span class="dt">ExecStart</span><span class="ot">=</span><span class="st">/usr/bin/env python3 -m radicale</span></span>
+<span id="cb17-6"><a aria-hidden="true" href="#cb17-6" tabindex="-1"></a><span class="dt">Restart</span><span class="ot">=</span><span class="st">on-failure</span></span>
+<span id="cb17-7"><a aria-hidden="true" href="#cb17-7" tabindex="-1"></a></span>
+<span id="cb17-8"><a aria-hidden="true" href="#cb17-8" tabindex="-1"></a><span class="kw">[Install]</span></span>
+<span id="cb17-9"><a aria-hidden="true" href="#cb17-9" tabindex="-1"></a><span class="dt">WantedBy</span><span class="ot">=</span><span class="st">default.target</span></span></code></pre></div>
 <p>Radicale will load the configuration file from <code>~/.config/radicale/config</code>. You should set the configuration option <code>filesystem_folder</code> in the <code>storage</code> section to something like <code>~/.var/lib/radicale/collections</code>.</p>
 <p>To enable and manage the service run:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a aria-hidden="true" href="#cb14-1" tabindex="-1"></a><span class="co"># Enable the service</span></span>
-<span id="cb14-2"><a aria-hidden="true" href="#cb14-2" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> enable radicale</span>
-<span id="cb14-3"><a aria-hidden="true" href="#cb14-3" tabindex="-1"></a><span class="co"># Start the service</span></span>
-<span id="cb14-4"><a aria-hidden="true" href="#cb14-4" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> start radicale</span>
-<span id="cb14-5"><a aria-hidden="true" href="#cb14-5" tabindex="-1"></a><span class="co"># Check the status of the service</span></span>
-<span id="cb14-6"><a aria-hidden="true" href="#cb14-6" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> status radicale</span>
-<span id="cb14-7"><a aria-hidden="true" href="#cb14-7" tabindex="-1"></a><span class="co"># View all log messages</span></span>
-<span id="cb14-8"><a aria-hidden="true" href="#cb14-8" tabindex="-1"></a><span class="ex">$</span> journalctl <span class="at">--user</span> <span class="at">--unit</span> radicale.service</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a aria-hidden="true" href="#cb18-1" tabindex="-1"></a><span class="co"># Enable the service</span></span>
+<span id="cb18-2"><a aria-hidden="true" href="#cb18-2" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> enable radicale</span>
+<span id="cb18-3"><a aria-hidden="true" href="#cb18-3" tabindex="-1"></a><span class="co"># Start the service</span></span>
+<span id="cb18-4"><a aria-hidden="true" href="#cb18-4" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> start radicale</span>
+<span id="cb18-5"><a aria-hidden="true" href="#cb18-5" tabindex="-1"></a><span class="co"># Check the status of the service</span></span>
+<span id="cb18-6"><a aria-hidden="true" href="#cb18-6" tabindex="-1"></a><span class="ex">$</span> systemctl <span class="at">--user</span> status radicale</span>
+<span id="cb18-7"><a aria-hidden="true" href="#cb18-7" tabindex="-1"></a><span class="co"># View all log messages</span></span>
+<span id="cb18-8"><a aria-hidden="true" href="#cb18-8" tabindex="-1"></a><span class="ex">$</span> journalctl <span class="at">--user</span> <span class="at">--unit</span> radicale.service</span></code></pre></div>
 </section>
 <section class="level4" id="windows-with-nssm---the-non-sucking-service-manager">
 <h4>Windows with "NSSM - the Non-Sucking Service Manager" <a class="headerlink" href="#windows-with-nssm---the-non-sucking-service-manager">&para;</a></h4>
@@ -430,7 +466,7 @@ user2:password2</code></pre>
 <li>Application
 <ul>
 <li>Path: <code>C:\Path\To\Python\python.exe</code></li>
-<li>Arguments: <code>-m radicale --config C:\Path\To\Config</code></li>
+<li>Arguments: <code>--config C:\Path\To\Config</code></li>
 </ul></li>
 <li>I/O redirection
 <ul>
@@ -446,31 +482,63 @@ user2:password2</code></pre>
 </section>
 <section class="level3" id="reverse-proxy">
 <h3>Reverse Proxy <a class="headerlink" href="#reverse-proxy">&para;</a></h3>
-<p>When a reverse proxy is used, the path at which Radicale is available must be provided via the <code>X-Script-Name</code> header. The proxy must remove the location from the URL path that is forwarded to Radicale.</p>
+<p>When a reverse proxy is used, and Radicale should be made available at a path below the root (such as <code>/radicale/</code>), then this path must be provided via the <code>X-Script-Name</code> header (without a trailing <code>/</code>). The proxy must remove the location from the URL path that is forwarded to Radicale. If Radicale should be made available at the root of the web server (in the nginx case using <code>location /</code>), then the setting of the <code>X-Script-Name</code> header should be removed from the example below.</p>
 <p>Example <strong>nginx</strong> configuration:</p>
+<p>See for latest examples: <a href="https://github.com/Kozea/Radicale/tree/master/contrib/nginx/">https://github.com/Kozea/Radicale/tree/master/contrib/nginx/</a></p>
 <pre class="nginx"><code>location /radicale/ { # The trailing / is important!
     proxy_pass        http://localhost:5232/; # The / is important!
     proxy_set_header  X-Script-Name /radicale;
     proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Host $host;
+    proxy_set_header  X-Forwarded-Port $server_port;
+    proxy_set_header  X-Forwarded-Proto $scheme;
     proxy_set_header  Host $http_host;
     proxy_pass_header Authorization;
 }</code></pre>
+<p>Example <strong>Caddy</strong> configuration:</p>
+<pre><code>handle_path /radicale/* {
+    uri strip_prefix /radicale
+    reverse_proxy localhost:5232 {
+        header_up X-Script-Name /radicale
+    }
+}</code></pre>
 <p>Example <strong>Apache</strong> configuration:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb16-1"><a aria-hidden="true" href="#cb16-1" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
-<span id="cb16-2"><a aria-hidden="true" href="#cb16-2" tabindex="-1"></a>RewriteRule<span class="st"> ^/radicale$ /radicale/ [R,L]</span></span>
-<span id="cb16-3"><a aria-hidden="true" href="#cb16-3" tabindex="-1"></a></span>
-<span id="cb16-4"><a aria-hidden="true" href="#cb16-4" tabindex="-1"></a><span class="fu">&lt;Location</span><span class="at"> "/radicale/"</span><span class="fu">&gt;</span></span>
-<span id="cb16-5"><a aria-hidden="true" href="#cb16-5" tabindex="-1"></a>    ProxyPass<span class="st">        http://localhost:5232/ retry=0</span></span>
-<span id="cb16-6"><a aria-hidden="true" href="#cb16-6" tabindex="-1"></a>    ProxyPassReverse<span class="st"> http://localhost:5232/</span></span>
-<span id="cb16-7"><a aria-hidden="true" href="#cb16-7" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Script-Name /radicale</span></span>
-<span id="cb16-8"><a aria-hidden="true" href="#cb16-8" tabindex="-1"></a><span class="fu">&lt;/Location&gt;</span></span></code></pre></div>
+<p>See for latest examples: <a href="https://github.com/Kozea/Radicale/tree/master/contrib/apache/">https://github.com/Kozea/Radicale/tree/master/contrib/apache/</a></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb21-1"><a aria-hidden="true" href="#cb21-1" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
+<span id="cb21-2"><a aria-hidden="true" href="#cb21-2" tabindex="-1"></a>RewriteRule<span class="st"> ^/radicale$ /radicale/ [R,L]</span></span>
+<span id="cb21-3"><a aria-hidden="true" href="#cb21-3" tabindex="-1"></a></span>
+<span id="cb21-4"><a aria-hidden="true" href="#cb21-4" tabindex="-1"></a><span class="fu">&lt;Location</span><span class="at"> "/radicale/"</span><span class="fu">&gt;</span></span>
+<span id="cb21-5"><a aria-hidden="true" href="#cb21-5" tabindex="-1"></a>    ProxyPass<span class="st">        http://localhost:5232/ retry=0</span></span>
+<span id="cb21-6"><a aria-hidden="true" href="#cb21-6" tabindex="-1"></a>    ProxyPassReverse<span class="st"> http://localhost:5232/</span></span>
+<span id="cb21-7"><a aria-hidden="true" href="#cb21-7" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Script-Name /radicale</span></span>
+<span id="cb21-8"><a aria-hidden="true" href="#cb21-8" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Forwarded-Port "%{SERVER_PORT}s"</span></span>
+<span id="cb21-9"><a aria-hidden="true" href="#cb21-9" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Forwarded-Proto expr=%{REQUEST_SCHEME}</span></span>
+<span id="cb21-10"><a aria-hidden="true" href="#cb21-10" tabindex="-1"></a><span class="fu">&lt;/Location&gt;</span></span></code></pre></div>
 <p>Example <strong>Apache .htaccess</strong> configuration:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb17-1"><a aria-hidden="true" href="#cb17-1" tabindex="-1"></a>DirectoryIndex<span class="st"> disabled</span></span>
-<span id="cb17-2"><a aria-hidden="true" href="#cb17-2" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
-<span id="cb17-3"><a aria-hidden="true" href="#cb17-3" tabindex="-1"></a>RewriteRule<span class="st"> ^(.*)$ http://localhost:5232/$1 [P,L]</span></span>
-<span id="cb17-4"><a aria-hidden="true" href="#cb17-4" tabindex="-1"></a></span>
-<span id="cb17-5"><a aria-hidden="true" href="#cb17-5" tabindex="-1"></a><span class="co"># Set to directory of .htaccess file:</span></span>
-<span id="cb17-6"><a aria-hidden="true" href="#cb17-6" tabindex="-1"></a>RequestHeader<span class="st"> set X-Script-Name /radicale</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb22-1"><a aria-hidden="true" href="#cb22-1" tabindex="-1"></a>DirectoryIndex<span class="st"> disabled</span></span>
+<span id="cb22-2"><a aria-hidden="true" href="#cb22-2" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
+<span id="cb22-3"><a aria-hidden="true" href="#cb22-3" tabindex="-1"></a>RewriteRule<span class="st"> ^(.*)$ http://localhost:5232/$1 [P,L]</span></span>
+<span id="cb22-4"><a aria-hidden="true" href="#cb22-4" tabindex="-1"></a></span>
+<span id="cb22-5"><a aria-hidden="true" href="#cb22-5" tabindex="-1"></a><span class="co"># Set to directory of .htaccess file:</span></span>
+<span id="cb22-6"><a aria-hidden="true" href="#cb22-6" tabindex="-1"></a>RequestHeader<span class="st"> set X-Script-Name /radicale</span></span>
+<span id="cb22-7"><a aria-hidden="true" href="#cb22-7" tabindex="-1"></a>RequestHeader<span class="st"> set X-Forwarded-Port "%{SERVER_PORT}s"</span></span>
+<span id="cb22-8"><a aria-hidden="true" href="#cb22-8" tabindex="-1"></a>RequestHeader<span class="st"> unset X-Forwarded-Proto</span></span>
+<span id="cb22-9"><a aria-hidden="true" href="#cb22-9" tabindex="-1"></a><span class="fu">&lt;If</span><span class="at"> "%{HTTPS} =~ /on/"</span><span class="fu">&gt;</span></span>
+<span id="cb22-10"><a aria-hidden="true" href="#cb22-10" tabindex="-1"></a>RequestHeader<span class="st"> set X-Forwarded-Proto "https"</span></span>
+<span id="cb22-11"><a aria-hidden="true" href="#cb22-11" tabindex="-1"></a><span class="fu">&lt;/If&gt;</span></span></code></pre></div>
+<p>Example <strong>lighttpd</strong> configuration:</p>
+<pre class="lighttpd"><code>server.modules += ( "mod_proxy" , "mod_setenv", "mod_rewrite" )
+
+$HTTP["url"] =~ "^/radicale/" {
+  proxy.server = ( "" =&gt; (( "host" =&gt; "127.0.0.1", "port" =&gt; "5232" )) )
+  proxy.header = ( "map-urlpath" =&gt; ( "/radicale/" =&gt; "/" ))
+
+  setenv.add-request-header = (
+    "X-Script-Name" =&gt; "/radicale",
+    "Script-Name" =&gt; "/radicale",
+  )
+  url.rewrite-once = ( "^/radicale/radicale/(.*)" =&gt; "/radicale/$1" )
+}</code></pre>
 <p>Be reminded that Radicale's default configuration enforces limits on the maximum number of parallel connections, the maximum file size and the rate of incorrect authentication attempts. Connections are terminated after a timeout.</p>
 <section class="level4" id="manage-user-accounts-with-the-reverse-proxy">
 <h4>Manage user accounts with the reverse proxy <a class="headerlink" href="#manage-user-accounts-with-the-reverse-proxy">&para;</a></h4>
@@ -485,51 +553,67 @@ user2:password2</code></pre>
     auth_basic           "Radicale - Password Required";
     auth_basic_user_file /etc/nginx/htpasswd;
 }</code></pre>
+<p>Example <strong>Caddy</strong> configuration:</p>
+<pre><code>handle_path /radicale/* {
+    uri strip_prefix /radicale
+    basicauth {
+        USER HASH
+    }
+    reverse_proxy localhost:5232 {
+        header_up X-Script-Name /radicale
+        header_up X-remote-user {http.auth.user.id}
+    }
+}</code></pre>
 <p>Example <strong>Apache</strong> configuration:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb19-1"><a aria-hidden="true" href="#cb19-1" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
-<span id="cb19-2"><a aria-hidden="true" href="#cb19-2" tabindex="-1"></a>RewriteRule<span class="st"> ^/radicale$ /radicale/ [R,L]</span></span>
-<span id="cb19-3"><a aria-hidden="true" href="#cb19-3" tabindex="-1"></a></span>
-<span id="cb19-4"><a aria-hidden="true" href="#cb19-4" tabindex="-1"></a><span class="fu">&lt;Location</span><span class="at"> "/radicale/"</span><span class="fu">&gt;</span></span>
-<span id="cb19-5"><a aria-hidden="true" href="#cb19-5" tabindex="-1"></a>    <span class="ex">AuthType</span><span class="ch">     </span><span class="kw">Basic</span></span>
-<span id="cb19-6"><a aria-hidden="true" href="#cb19-6" tabindex="-1"></a>    AuthName<span class="st">     "Radicale - Password Required"</span></span>
-<span id="cb19-7"><a aria-hidden="true" href="#cb19-7" tabindex="-1"></a>    AuthUserFile<span class="st"> "/etc/radicale/htpasswd"</span></span>
-<span id="cb19-8"><a aria-hidden="true" href="#cb19-8" tabindex="-1"></a>    Require<span class="st">      valid-user</span></span>
-<span id="cb19-9"><a aria-hidden="true" href="#cb19-9" tabindex="-1"></a></span>
-<span id="cb19-10"><a aria-hidden="true" href="#cb19-10" tabindex="-1"></a>    ProxyPass<span class="st">        http://localhost:5232/ retry=0</span></span>
-<span id="cb19-11"><a aria-hidden="true" href="#cb19-11" tabindex="-1"></a>    ProxyPassReverse<span class="st"> http://localhost:5232/</span></span>
-<span id="cb19-12"><a aria-hidden="true" href="#cb19-12" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Script-Name /radicale</span></span>
-<span id="cb19-13"><a aria-hidden="true" href="#cb19-13" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Remote-User expr=%{REMOTE_USER}</span></span>
-<span id="cb19-14"><a aria-hidden="true" href="#cb19-14" tabindex="-1"></a><span class="fu">&lt;/Location&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb26-1"><a aria-hidden="true" href="#cb26-1" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
+<span id="cb26-2"><a aria-hidden="true" href="#cb26-2" tabindex="-1"></a>RewriteRule<span class="st"> ^/radicale$ /radicale/ [R,L]</span></span>
+<span id="cb26-3"><a aria-hidden="true" href="#cb26-3" tabindex="-1"></a></span>
+<span id="cb26-4"><a aria-hidden="true" href="#cb26-4" tabindex="-1"></a><span class="fu">&lt;Location</span><span class="at"> "/radicale/"</span><span class="fu">&gt;</span></span>
+<span id="cb26-5"><a aria-hidden="true" href="#cb26-5" tabindex="-1"></a>    <span class="ex">AuthType</span><span class="ch">     </span><span class="kw">Basic</span></span>
+<span id="cb26-6"><a aria-hidden="true" href="#cb26-6" tabindex="-1"></a>    AuthName<span class="st">     "Radicale - Password Required"</span></span>
+<span id="cb26-7"><a aria-hidden="true" href="#cb26-7" tabindex="-1"></a>    AuthUserFile<span class="st"> "/etc/radicale/htpasswd"</span></span>
+<span id="cb26-8"><a aria-hidden="true" href="#cb26-8" tabindex="-1"></a>    Require<span class="st">      valid-user</span></span>
+<span id="cb26-9"><a aria-hidden="true" href="#cb26-9" tabindex="-1"></a></span>
+<span id="cb26-10"><a aria-hidden="true" href="#cb26-10" tabindex="-1"></a>    ProxyPass<span class="st">        http://localhost:5232/ retry=0</span></span>
+<span id="cb26-11"><a aria-hidden="true" href="#cb26-11" tabindex="-1"></a>    ProxyPassReverse<span class="st"> http://localhost:5232/</span></span>
+<span id="cb26-12"><a aria-hidden="true" href="#cb26-12" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Script-Name /radicale</span></span>
+<span id="cb26-13"><a aria-hidden="true" href="#cb26-13" tabindex="-1"></a>    RequestHeader<span class="st">    set X-Remote-User expr=%{REMOTE_USER}</span></span>
+<span id="cb26-14"><a aria-hidden="true" href="#cb26-14" tabindex="-1"></a><span class="fu">&lt;/Location&gt;</span></span></code></pre></div>
 <p>Example <strong>Apache .htaccess</strong> configuration:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb20-1"><a aria-hidden="true" href="#cb20-1" tabindex="-1"></a>DirectoryIndex<span class="st"> disabled</span></span>
-<span id="cb20-2"><a aria-hidden="true" href="#cb20-2" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
-<span id="cb20-3"><a aria-hidden="true" href="#cb20-3" tabindex="-1"></a>RewriteRule<span class="st"> ^(.*)$ http://localhost:5232/$1 [P,L]</span></span>
-<span id="cb20-4"><a aria-hidden="true" href="#cb20-4" tabindex="-1"></a></span>
-<span id="cb20-5"><a aria-hidden="true" href="#cb20-5" tabindex="-1"></a><span class="ex">AuthType</span><span class="ch">     </span><span class="kw">Basic</span></span>
-<span id="cb20-6"><a aria-hidden="true" href="#cb20-6" tabindex="-1"></a>AuthName<span class="st">     "Radicale - Password Required"</span></span>
-<span id="cb20-7"><a aria-hidden="true" href="#cb20-7" tabindex="-1"></a>AuthUserFile<span class="st"> "/etc/radicale/htpasswd"</span></span>
-<span id="cb20-8"><a aria-hidden="true" href="#cb20-8" tabindex="-1"></a>Require<span class="st">      valid-user</span></span>
-<span id="cb20-9"><a aria-hidden="true" href="#cb20-9" tabindex="-1"></a></span>
-<span id="cb20-10"><a aria-hidden="true" href="#cb20-10" tabindex="-1"></a><span class="co"># Set to directory of .htaccess file:</span></span>
-<span id="cb20-11"><a aria-hidden="true" href="#cb20-11" tabindex="-1"></a>RequestHeader<span class="st"> set X-Script-Name /radicale</span></span>
-<span id="cb20-12"><a aria-hidden="true" href="#cb20-12" tabindex="-1"></a>RequestHeader<span class="st"> set X-Remote-User expr=%{REMOTE_USER}</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb27-1"><a aria-hidden="true" href="#cb27-1" tabindex="-1"></a>DirectoryIndex<span class="st"> disabled</span></span>
+<span id="cb27-2"><a aria-hidden="true" href="#cb27-2" tabindex="-1"></a><span class="ex">RewriteEngine</span><span class="ch"> </span><span class="kw">On</span></span>
+<span id="cb27-3"><a aria-hidden="true" href="#cb27-3" tabindex="-1"></a>RewriteRule<span class="st"> ^(.*)$ http://localhost:5232/$1 [P,L]</span></span>
+<span id="cb27-4"><a aria-hidden="true" href="#cb27-4" tabindex="-1"></a></span>
+<span id="cb27-5"><a aria-hidden="true" href="#cb27-5" tabindex="-1"></a><span class="ex">AuthType</span><span class="ch">     </span><span class="kw">Basic</span></span>
+<span id="cb27-6"><a aria-hidden="true" href="#cb27-6" tabindex="-1"></a>AuthName<span class="st">     "Radicale - Password Required"</span></span>
+<span id="cb27-7"><a aria-hidden="true" href="#cb27-7" tabindex="-1"></a>AuthUserFile<span class="st"> "/etc/radicale/htpasswd"</span></span>
+<span id="cb27-8"><a aria-hidden="true" href="#cb27-8" tabindex="-1"></a>Require<span class="st">      valid-user</span></span>
+<span id="cb27-9"><a aria-hidden="true" href="#cb27-9" tabindex="-1"></a></span>
+<span id="cb27-10"><a aria-hidden="true" href="#cb27-10" tabindex="-1"></a><span class="co"># Set to directory of .htaccess file:</span></span>
+<span id="cb27-11"><a aria-hidden="true" href="#cb27-11" tabindex="-1"></a>RequestHeader<span class="st"> set X-Script-Name /radicale</span></span>
+<span id="cb27-12"><a aria-hidden="true" href="#cb27-12" tabindex="-1"></a>RequestHeader<span class="st"> set X-Remote-User expr=%{REMOTE_USER}</span></span></code></pre></div>
 <blockquote>
-<p><strong>Security:</strong> Untrusted clients should not be able to access the Radicale server directly. Otherwise, they can authenticate as any user.</p>
+<p><strong>Security:</strong> Untrusted clients should not be able to access the Radicale server directly. Otherwise, they can authenticate as any user by simply setting related HTTP header. This can be prevented by restrict listen to loopback interface only or at least a local firewall rule.</p>
 </blockquote>
 </section>
 <section class="level4" id="secure-connection-between-radicale-and-the-reverse-proxy">
 <h4>Secure connection between Radicale and the reverse proxy <a class="headerlink" href="#secure-connection-between-radicale-and-the-reverse-proxy">&para;</a></h4>
 <p>SSL certificates can be used to encrypt and authenticate the connection between Radicale and the reverse proxy. First you have to generate a certificate for Radicale and a certificate for the reverse proxy. The following commands generate self-signed certificates. You will be asked to enter additional information about the certificate, the values don't matter and you can keep the defaults.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a aria-hidden="true" href="#cb21-1" tabindex="-1"></a><span class="ex">openssl</span> req <span class="at">-x509</span> <span class="at">-newkey</span> rsa:4096 <span class="at">-keyout</span> server_key.pem <span class="at">-out</span> server_cert.pem <span class="dt">\</span></span>
-<span id="cb21-2"><a aria-hidden="true" href="#cb21-2" tabindex="-1"></a>        <span class="at">-nodes</span> <span class="at">-days</span> 9999</span>
-<span id="cb21-3"><a aria-hidden="true" href="#cb21-3" tabindex="-1"></a><span class="ex">openssl</span> req <span class="at">-x509</span> <span class="at">-newkey</span> rsa:4096 <span class="at">-keyout</span> client_key.pem <span class="at">-out</span> client_cert.pem <span class="dt">\</span></span>
-<span id="cb21-4"><a aria-hidden="true" href="#cb21-4" tabindex="-1"></a>        <span class="at">-nodes</span> <span class="at">-days</span> 9999</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a aria-hidden="true" href="#cb28-1" tabindex="-1"></a><span class="ex">openssl</span> req <span class="at">-x509</span> <span class="at">-newkey</span> rsa:4096 <span class="at">-keyout</span> server_key.pem <span class="at">-out</span> server_cert.pem <span class="dt">\</span></span>
+<span id="cb28-2"><a aria-hidden="true" href="#cb28-2" tabindex="-1"></a>        <span class="at">-nodes</span> <span class="at">-days</span> 9999</span>
+<span id="cb28-3"><a aria-hidden="true" href="#cb28-3" tabindex="-1"></a><span class="ex">openssl</span> req <span class="at">-x509</span> <span class="at">-newkey</span> rsa:4096 <span class="at">-keyout</span> client_key.pem <span class="at">-out</span> client_cert.pem <span class="dt">\</span></span>
+<span id="cb28-4"><a aria-hidden="true" href="#cb28-4" tabindex="-1"></a>        <span class="at">-nodes</span> <span class="at">-days</span> 9999</span></code></pre></div>
 <p>Use the following configuration for Radicale:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb22-1"><a aria-hidden="true" href="#cb22-1" tabindex="-1"></a><span class="kw">[server]</span></span>
-<span id="cb22-2"><a aria-hidden="true" href="#cb22-2" tabindex="-1"></a><span class="dt">ssl </span><span class="ot">=</span><span class="st"> </span><span class="kw">True</span></span>
-<span id="cb22-3"><a aria-hidden="true" href="#cb22-3" tabindex="-1"></a><span class="dt">certificate </span><span class="ot">=</span><span class="st"> /path/to/server_cert.pem</span></span>
-<span id="cb22-4"><a aria-hidden="true" href="#cb22-4" tabindex="-1"></a><span class="dt">key </span><span class="ot">=</span><span class="st"> /path/to/server_key.pem</span></span>
-<span id="cb22-5"><a aria-hidden="true" href="#cb22-5" tabindex="-1"></a><span class="dt">certificate_authority </span><span class="ot">=</span><span class="st"> /path/to/client_cert.pem</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb29-1"><a aria-hidden="true" href="#cb29-1" tabindex="-1"></a><span class="kw">[server]</span></span>
+<span id="cb29-2"><a aria-hidden="true" href="#cb29-2" tabindex="-1"></a><span class="dt">ssl </span><span class="ot">=</span><span class="st"> </span><span class="kw">True</span></span>
+<span id="cb29-3"><a aria-hidden="true" href="#cb29-3" tabindex="-1"></a><span class="dt">certificate </span><span class="ot">=</span><span class="st"> /path/to/server_cert.pem</span></span>
+<span id="cb29-4"><a aria-hidden="true" href="#cb29-4" tabindex="-1"></a><span class="dt">key </span><span class="ot">=</span><span class="st"> /path/to/server_key.pem</span></span>
+<span id="cb29-5"><a aria-hidden="true" href="#cb29-5" tabindex="-1"></a><span class="dt">certificate_authority </span><span class="ot">=</span><span class="st"> /path/to/client_cert.pem</span></span></code></pre></div>
+<p>If you're using the Let's Encrypt's Certbot, the configuration should look similar to this:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb30-1"><a aria-hidden="true" href="#cb30-1" tabindex="-1"></a><span class="kw">[server]</span></span>
+<span id="cb30-2"><a aria-hidden="true" href="#cb30-2" tabindex="-1"></a><span class="dt">ssl </span><span class="ot">=</span><span class="st"> </span><span class="kw">True</span></span>
+<span id="cb30-3"><a aria-hidden="true" href="#cb30-3" tabindex="-1"></a><span class="dt">certificate </span><span class="ot">=</span><span class="st"> /etc/letsencrypt/live/{Your Domain}/fullchain.pem</span></span>
+<span id="cb30-4"><a aria-hidden="true" href="#cb30-4" tabindex="-1"></a><span class="dt">key </span><span class="ot">=</span><span class="st"> /etc/letsencrypt/live/{Your Domain}/privkey.pem</span></span></code></pre></div>
 <p>Example <strong>nginx</strong> configuration:</p>
 <pre class="nginx"><code>location /radicale/ {
     proxy_pass https://localhost:5232/;
@@ -537,7 +621,6 @@ user2:password2</code></pre>
     # Place the files somewhere nginx is allowed to access (e.g. /etc/nginx/...).
     proxy_ssl_certificate         /path/to/client_cert.pem;
     proxy_ssl_certificate_key     /path/to/client_key.pem;
-    proxy_ssl_trusted_certificate /path/to/server_cert.pem;
 }</code></pre>
 </section>
 </section>
@@ -546,15 +629,15 @@ user2:password2</code></pre>
 <p>Radicale is compatible with the WSGI specification.</p>
 <p>A configuration file can be set with the <code>RADICALE_CONFIG</code> environment variable, otherwise no configuration file is loaded and the default configuration is used.</p>
 <p>Example <strong>uWSGI</strong> configuration:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb24-1"><a aria-hidden="true" href="#cb24-1" tabindex="-1"></a><span class="kw">[uwsgi]</span></span>
-<span id="cb24-2"><a aria-hidden="true" href="#cb24-2" tabindex="-1"></a><span class="dt">http-socket </span><span class="ot">=</span><span class="st"> 127.0.0.1:5232</span></span>
-<span id="cb24-3"><a aria-hidden="true" href="#cb24-3" tabindex="-1"></a><span class="dt">processes </span><span class="ot">=</span><span class="st"> </span><span class="dv">8</span></span>
-<span id="cb24-4"><a aria-hidden="true" href="#cb24-4" tabindex="-1"></a><span class="dt">plugin </span><span class="ot">=</span><span class="st"> python3</span></span>
-<span id="cb24-5"><a aria-hidden="true" href="#cb24-5" tabindex="-1"></a><span class="dt">module </span><span class="ot">=</span><span class="st"> radicale</span></span>
-<span id="cb24-6"><a aria-hidden="true" href="#cb24-6" tabindex="-1"></a><span class="dt">env </span><span class="ot">=</span><span class="st"> RADICALE_CONFIG=/etc/radicale/config</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb32-1"><a aria-hidden="true" href="#cb32-1" tabindex="-1"></a><span class="kw">[uwsgi]</span></span>
+<span id="cb32-2"><a aria-hidden="true" href="#cb32-2" tabindex="-1"></a><span class="dt">http-socket </span><span class="ot">=</span><span class="st"> 127.0.0.1:5232</span></span>
+<span id="cb32-3"><a aria-hidden="true" href="#cb32-3" tabindex="-1"></a><span class="dt">processes </span><span class="ot">=</span><span class="st"> </span><span class="dv">8</span></span>
+<span id="cb32-4"><a aria-hidden="true" href="#cb32-4" tabindex="-1"></a><span class="dt">plugin </span><span class="ot">=</span><span class="st"> python3</span></span>
+<span id="cb32-5"><a aria-hidden="true" href="#cb32-5" tabindex="-1"></a><span class="dt">module </span><span class="ot">=</span><span class="st"> radicale</span></span>
+<span id="cb32-6"><a aria-hidden="true" href="#cb32-6" tabindex="-1"></a><span class="dt">env </span><span class="ot">=</span><span class="st"> RADICALE_CONFIG=/etc/radicale/config</span></span></code></pre></div>
 <p>Example <strong>Gunicorn</strong> configuration:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a aria-hidden="true" href="#cb25-1" tabindex="-1"></a><span class="ex">gunicorn</span> <span class="at">--bind</span> <span class="st">'127.0.0.1:5232'</span> <span class="at">--env</span> <span class="st">'RADICALE_CONFIG=/etc/radicale/config'</span> <span class="dt">\</span></span>
-<span id="cb25-2"><a aria-hidden="true" href="#cb25-2" tabindex="-1"></a>         <span class="at">--workers</span> 8 radicale</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a aria-hidden="true" href="#cb33-1" tabindex="-1"></a><span class="ex">gunicorn</span> <span class="at">--bind</span> <span class="st">'127.0.0.1:5232'</span> <span class="at">--env</span> <span class="st">'RADICALE_CONFIG=/etc/radicale/config'</span> <span class="dt">\</span></span>
+<span id="cb33-2"><a aria-hidden="true" href="#cb33-2" tabindex="-1"></a>         <span class="at">--workers</span> 8 radicale</span></code></pre></div>
 <section class="level4" id="manage-user-accounts-with-the-wsgi-server">
 <h4>Manage user accounts with the WSGI server <a class="headerlink" href="#manage-user-accounts-with-the-wsgi-server">&para;</a></h4>
 <p>Set the configuration option <code>type</code> in the <code>auth</code> section to <code>remote_user</code>. Radicale uses the username provided by the WSGI server and disables authentication over HTTP.</p>
@@ -563,13 +646,42 @@ user2:password2</code></pre>
 <section class="level3" id="versioning-with-git">
 <h3>Versioning with Git <a class="headerlink" href="#versioning-with-git">&para;</a></h3>
 <p>This tutorial describes how to keep track of all changes to calendars and address books with <strong>git</strong> (or any other version control system).</p>
-<p>The repository must be initialized by running <code>git init</code> in the file system folder. Internal files of Radicale can be excluded by creating the file <code>.gitignore</code> with the following content:</p>
-<pre class="gitignore"><code>.Radicale.cache
-.Radicale.lock
-.Radicale.tmp-*</code></pre>
+<p>The repository must be initialized in the collection base directory of the user running <code>radicale</code> daemon.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a aria-hidden="true" href="#cb34-1" tabindex="-1"></a><span class="co">## assuming "radicale" user is starting "radicale" service</span></span>
+<span id="cb34-2"><a aria-hidden="true" href="#cb34-2" tabindex="-1"></a><span class="co"># change to user "radicale"</span></span>
+<span id="cb34-3"><a aria-hidden="true" href="#cb34-3" tabindex="-1"></a><span class="fu">su</span> <span class="at">-l</span> <span class="at">-s</span> /bin/bash radicale</span>
+<span id="cb34-4"><a aria-hidden="true" href="#cb34-4" tabindex="-1"></a></span>
+<span id="cb34-5"><a aria-hidden="true" href="#cb34-5" tabindex="-1"></a><span class="co"># change to collection base directory defined in [storage] -&gt; filesystem_folder</span></span>
+<span id="cb34-6"><a aria-hidden="true" href="#cb34-6" tabindex="-1"></a><span class="co">#  assumed here /var/lib/radicale/collections</span></span>
+<span id="cb34-7"><a aria-hidden="true" href="#cb34-7" tabindex="-1"></a><span class="bu">cd</span> /var/lib/radicale/collections</span>
+<span id="cb34-8"><a aria-hidden="true" href="#cb34-8" tabindex="-1"></a></span>
+<span id="cb34-9"><a aria-hidden="true" href="#cb34-9" tabindex="-1"></a><span class="co"># initialize git repository</span></span>
+<span id="cb34-10"><a aria-hidden="true" href="#cb34-10" tabindex="-1"></a><span class="fu">git</span> init</span>
+<span id="cb34-11"><a aria-hidden="true" href="#cb34-11" tabindex="-1"></a></span>
+<span id="cb34-12"><a aria-hidden="true" href="#cb34-12" tabindex="-1"></a><span class="co"># set user and e-mail, here minimum example</span></span>
+<span id="cb34-13"><a aria-hidden="true" href="#cb34-13" tabindex="-1"></a><span class="fu">git</span> config user.name <span class="st">"</span><span class="va">$USER</span><span class="st">"</span></span>
+<span id="cb34-14"><a aria-hidden="true" href="#cb34-14" tabindex="-1"></a><span class="fu">git</span> config user.email <span class="st">"</span><span class="va">$USER</span><span class="st">@</span><span class="va">$HOSTNAME</span><span class="st">"</span></span>
+<span id="cb34-15"><a aria-hidden="true" href="#cb34-15" tabindex="-1"></a></span>
+<span id="cb34-16"><a aria-hidden="true" href="#cb34-16" tabindex="-1"></a><span class="co"># define ignore of cache/lock/tmp files</span></span>
+<span id="cb34-17"><a aria-hidden="true" href="#cb34-17" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt;'END'</span> <span class="op">&gt;</span>.gitignore</span>
+<span id="cb34-18"><a aria-hidden="true" href="#cb34-18" tabindex="-1"></a><span class="st">.Radicale.cache</span></span>
+<span id="cb34-19"><a aria-hidden="true" href="#cb34-19" tabindex="-1"></a><span class="st">.Radicale.lock</span></span>
+<span id="cb34-20"><a aria-hidden="true" href="#cb34-20" tabindex="-1"></a><span class="st">.Radicale.tmp-*</span></span>
+<span id="cb34-21"><a aria-hidden="true" href="#cb34-21" tabindex="-1"></a><span class="op">END</span></span></code></pre></div>
 <p>The configuration option <code>hook</code> in the <code>storage</code> section must be set to the following command:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a aria-hidden="true" href="#cb27-1" tabindex="-1"></a><span class="fu">git</span> add <span class="at">-A</span> <span class="kw">&amp;&amp;</span> <span class="kw">(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--quiet</span> <span class="kw">||</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Changes by "</span>%<span class="er">(</span><span class="ex">user</span><span class="kw">)</span><span class="ex">s</span><span class="kw">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a aria-hidden="true" href="#cb35-1" tabindex="-1"></a><span class="fu">git</span> add <span class="at">-A</span> <span class="kw">&&</span> <span class="kw">(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--quiet</span> <span class="kw">||</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Changes by </span><span class="dt">\"</span><span class="st">%(user)s</span><span class="dt">\"</span><span class="st">"</span><span class="kw">)</span></span></code></pre></div>
 <p>The command gets executed after every change to the storage and commits the changes into the <strong>git</strong> repository.</p>
+<p>Log of <code>git</code> can be investigated using</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a aria-hidden="true" href="#cb36-1" tabindex="-1"></a><span class="fu">su</span> <span class="at">-l</span> <span class="at">-s</span> /bin/bash radicale</span>
+<span id="cb36-2"><a aria-hidden="true" href="#cb36-2" tabindex="-1"></a><span class="bu">cd</span> /var/lib/radicale/collections</span>
+<span id="cb36-3"><a aria-hidden="true" href="#cb36-3" tabindex="-1"></a><span class="fu">git</span> log</span></code></pre></div>
+<p>In case of problems, make sure you run radicale with <code>--debug</code> switch and inspect the log output. For more information, please visit <a href="#logging-overview">section on logging</a>.</p>
+<p>Reason for problems can be</p>
+<ul>
+<li>SELinux status -&gt; check related audit log</li>
+<li>problematic file/directory permissions</li>
+<li>command is not fond or cannot be executed or argument problem</li>
+</ul>
 </section>
 </section>
 <section class="level2" id="documentation-1">
@@ -578,23 +690,37 @@ user2:password2</code></pre>
 <h3>Configuration <a class="headerlink" href="#configuration">&para;</a></h3>
 <p>Radicale can be configured with a configuration file or with command line arguments.</p>
 <p>An example configuration file looks like:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb28-1"><a aria-hidden="true" href="#cb28-1" tabindex="-1"></a><span class="kw">[server]</span></span>
-<span id="cb28-2"><a aria-hidden="true" href="#cb28-2" tabindex="-1"></a><span class="co"># Bind all addresses</span></span>
-<span id="cb28-3"><a aria-hidden="true" href="#cb28-3" tabindex="-1"></a><span class="dt">hosts </span><span class="ot">=</span><span class="st"> 0.0.0.0:5232, [::]:5232</span></span>
-<span id="cb28-4"><a aria-hidden="true" href="#cb28-4" tabindex="-1"></a></span>
-<span id="cb28-5"><a aria-hidden="true" href="#cb28-5" tabindex="-1"></a><span class="kw">[auth]</span></span>
-<span id="cb28-6"><a aria-hidden="true" href="#cb28-6" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
-<span id="cb28-7"><a aria-hidden="true" href="#cb28-7" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> ~/.config/radicale/users</span></span>
-<span id="cb28-8"><a aria-hidden="true" href="#cb28-8" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> md5</span></span>
-<span id="cb28-9"><a aria-hidden="true" href="#cb28-9" tabindex="-1"></a></span>
-<span id="cb28-10"><a aria-hidden="true" href="#cb28-10" tabindex="-1"></a><span class="kw">[storage]</span></span>
-<span id="cb28-11"><a aria-hidden="true" href="#cb28-11" tabindex="-1"></a><span class="dt">filesystem_folder </span><span class="ot">=</span><span class="st"> ~/.var/lib/radicale/collections</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb37-1"><a aria-hidden="true" href="#cb37-1" tabindex="-1"></a><span class="kw">[server]</span></span>
+<span id="cb37-2"><a aria-hidden="true" href="#cb37-2" tabindex="-1"></a><span class="co"># Bind all addresses</span></span>
+<span id="cb37-3"><a aria-hidden="true" href="#cb37-3" tabindex="-1"></a><span class="dt">hosts </span><span class="ot">=</span><span class="st"> 0.0.0.0:5232, [::]:5232</span></span>
+<span id="cb37-4"><a aria-hidden="true" href="#cb37-4" tabindex="-1"></a></span>
+<span id="cb37-5"><a aria-hidden="true" href="#cb37-5" tabindex="-1"></a><span class="kw">[auth]</span></span>
+<span id="cb37-6"><a aria-hidden="true" href="#cb37-6" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> htpasswd</span></span>
+<span id="cb37-7"><a aria-hidden="true" href="#cb37-7" tabindex="-1"></a><span class="dt">htpasswd_filename </span><span class="ot">=</span><span class="st"> ~/.config/radicale/users</span></span>
+<span id="cb37-8"><a aria-hidden="true" href="#cb37-8" tabindex="-1"></a><span class="dt">htpasswd_encryption </span><span class="ot">=</span><span class="st"> autodetect</span></span>
+<span id="cb37-9"><a aria-hidden="true" href="#cb37-9" tabindex="-1"></a></span>
+<span id="cb37-10"><a aria-hidden="true" href="#cb37-10" tabindex="-1"></a><span class="kw">[storage]</span></span>
+<span id="cb37-11"><a aria-hidden="true" href="#cb37-11" tabindex="-1"></a><span class="dt">filesystem_folder </span><span class="ot">=</span><span class="st"> ~/.var/lib/radicale/collections</span></span></code></pre></div>
 <p>Radicale tries to load configuration files from <code>/etc/radicale/config</code> and <code>~/.config/radicale/config</code>. Custom paths can be specified with the <code>--config /path/to/config</code> command line argument or the <code>RADICALE_CONFIG</code> environment variable. Multiple configuration files can be separated by <code>:</code> (resp. <code>;</code> on Windows). Paths that start with <code>?</code> are optional.</p>
 <p>The same example configuration via command line arguments looks like:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a aria-hidden="true" href="#cb29-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> radicale <span class="at">--server-hosts</span> 0.0.0.0:5232,[::]:5232 <span class="dt">\</span></span>
-<span id="cb29-2"><a aria-hidden="true" href="#cb29-2" tabindex="-1"></a>        <span class="at">--auth-type</span> htpasswd <span class="at">--auth-htpasswd-filename</span> ~/.config/radicale/users <span class="dt">\</span></span>
-<span id="cb29-3"><a aria-hidden="true" href="#cb29-3" tabindex="-1"></a>        <span class="at">--auth-htpasswd-encryption</span> md5</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a aria-hidden="true" href="#cb38-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> radicale <span class="at">--server-hosts</span> 0.0.0.0:5232,[::]:5232 <span class="dt">\</span></span>
+<span id="cb38-2"><a aria-hidden="true" href="#cb38-2" tabindex="-1"></a>        <span class="at">--auth-type</span> htpasswd <span class="at">--auth-htpasswd-filename</span> ~/.config/radicale/users <span class="dt">\</span></span>
+<span id="cb38-3"><a aria-hidden="true" href="#cb38-3" tabindex="-1"></a>        <span class="at">--auth-htpasswd-encryption</span> autodetect</span></code></pre></div>
 <p>Add the argument <code>--config ""</code> to stop Radicale from loading the default configuration files. Run <code>python3 -m radicale --help</code> for more information.</p>
+<p>One can also use command line options in startup scripts using following examples:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a aria-hidden="true" href="#cb39-1" tabindex="-1"></a><span class="co">## simple variable containing multiple options</span></span>
+<span id="cb39-2"><a aria-hidden="true" href="#cb39-2" tabindex="-1"></a><span class="va">RADICALE_OPTIONS</span><span class="op">=</span><span class="st">"--logging-level=debug --config=/etc/radicale/config --logging-request-header-on-debug --logging-rights-rule-doesnt-match-on-debug"</span></span>
+<span id="cb39-3"><a aria-hidden="true" href="#cb39-3" tabindex="-1"></a><span class="ex">/usr/bin/radicale</span> <span class="va">$RADICALE_OPTIONS</span></span>
+<span id="cb39-4"><a aria-hidden="true" href="#cb39-4" tabindex="-1"></a></span>
+<span id="cb39-5"><a aria-hidden="true" href="#cb39-5" tabindex="-1"></a><span class="co">## variable as array method #1</span></span>
+<span id="cb39-6"><a aria-hidden="true" href="#cb39-6" tabindex="-1"></a><span class="va">RADICALE_OPTIONS</span><span class="op">=</span><span class="va">(</span><span class="st">"--logging-level=debug"</span> <span class="st">"--config=/etc/radicale/config"</span> <span class="st">"--logging-request-header-on-debug"</span> <span class="st">"--logging-rights-rule-doesnt-match-on-debug"</span><span class="va">)</span></span>
+<span id="cb39-7"><a aria-hidden="true" href="#cb39-7" tabindex="-1"></a><span class="ex">/usr/bin/radicale</span> <span class="va">${RADICALE_OPTIONS</span><span class="op">[@]</span><span class="va">}</span></span>
+<span id="cb39-8"><a aria-hidden="true" href="#cb39-8" tabindex="-1"></a></span>
+<span id="cb39-9"><a aria-hidden="true" href="#cb39-9" tabindex="-1"></a><span class="co">## variable as array method #2</span></span>
+<span id="cb39-10"><a aria-hidden="true" href="#cb39-10" tabindex="-1"></a><span class="va">RADICALE_OPTIONS</span><span class="op">=</span><span class="va">()</span></span>
+<span id="cb39-11"><a aria-hidden="true" href="#cb39-11" tabindex="-1"></a><span class="va">RADICALE_OPTIONS</span><span class="op">+=</span><span class="va">(</span><span class="st">"--logging-level=debug"</span><span class="va">)</span></span>
+<span id="cb39-12"><a aria-hidden="true" href="#cb39-12" tabindex="-1"></a><span class="va">RADICALE_OPTIONS</span><span class="op">+=</span><span class="va">(</span><span class="st">"--config=/etc/radicale/config"</span><span class="va">)</span></span>
+<span id="cb39-13"><a aria-hidden="true" href="#cb39-13" tabindex="-1"></a><span class="ex">/usr/bin/radicale</span> <span class="va">${RADICALE_OPTIONS</span><span class="op">[@]</span><span class="va">}</span></span></code></pre></div>
 <p>In the following, all configuration categories and options are described.</p>
 <section class="level4" id="server">
 <h4>server <a class="headerlink" href="#server">&para;</a></h4>
@@ -637,7 +763,25 @@ user2:password2</code></pre>
 <section class="level5" id="certificate_authority">
 <h5>certificate_authority <a class="headerlink" href="#certificate_authority">&para;</a></h5>
 <p>Path to the CA certificate for validating client certificates. This can be used to secure TCP traffic between Radicale and a reverse proxy. If you want to authenticate users with client-side certificates, you also have to write an authentication plugin that extracts the username from the certificate.</p>
-<p>Default:</p>
+<p>Default: (unset)</p>
+</section>
+<section class="level5" id="protocol">
+<h5>protocol <a class="headerlink" href="#protocol">&para;</a></h5>
+<p><em>(&gt;= 3.3.1)</em></p>
+<p>Accepted SSL protocol (maybe not all supported by underlying OpenSSL version) Example for secure configuration: ALL -SSLv3 -TLSv1 -TLSv1.1 Format: Apache SSLProtocol list (from "mod_ssl")</p>
+<p>Default: (system default)</p>
+</section>
+<section class="level5" id="ciphersuite">
+<h5>ciphersuite <a class="headerlink" href="#ciphersuite">&para;</a></h5>
+<p><em>(&gt;= 3.3.1)</em></p>
+<p>Accepted SSL ciphersuite (maybe not all supported by underlying OpenSSL version) Example for secure configuration: DHE:ECDHE:-NULL:-SHA Format: OpenSSL cipher list (see also "man openssl-ciphers")</p>
+<p>Default: (system-default)</p>
+</section>
+<section class="level5" id="script_name">
+<h5>script_name <a class="headerlink" href="#script_name">&para;</a></h5>
+<p><em>(&gt;= 3.5.0)</em></p>
+<p>Strip script name from URI if called by reverse proxy</p>
+<p>Default: (taken from HTTP_X_SCRIPT_NAME or SCRIPT_NAME)</p>
 </section>
 </section>
 <section class="level4" id="encoding">
@@ -660,15 +804,39 @@ user2:password2</code></pre>
 <p>The method to verify usernames and passwords.</p>
 <p>Available backends:</p>
 <p><code>none</code> : Just allows all usernames and passwords.</p>
+<p><code>denyall</code> <em>(&gt;= 3.2.2)</em> : Just denies all usernames and passwords.</p>
 <p><code>htpasswd</code> : Use an <a href="https://httpd.apache.org/docs/current/programs/htpasswd.html">Apache htpasswd file</a> to store usernames and passwords.</p>
-<p><code>remote_user</code> : Takes the username from the <code>REMOTE_USER</code> environment variable and disables HTTP authentication. This can be used to provide the username from a WSGI server.</p>
-<p><code>http_x_remote_user</code> : Takes the username from the <code>X-Remote-User</code> HTTP header and disables HTTP authentication. This can be used to provide the username from a reverse proxy.</p>
-<p>Default: <code>none</code></p>
+<p><code>remote_user</code> : Takes the username from the <code>REMOTE_USER</code> environment variable and disables HTTP authentication. This can be used to provide the username from a WSGI server which authenticated the client upfront. Required to validate, otherwise client can supply the header itself which is unconditionally trusted then.</p>
+<p><code>http_x_remote_user</code> : Takes the username from the <code>X-Remote-User</code> HTTP header and disables HTTP authentication. This can be used to provide the username from a reverse proxy which authenticated the client upfront. Required to validate, otherwise client can supply the header itself which is unconditionally trusted then.</p>
+<p><code>ldap</code> <em>(&gt;= 3.3.0)</em> : Use a LDAP or AD server to authenticate users by relaying credentials from client and handle result.</p>
+<p><code>dovecot</code> <em>(&gt;= 3.3.1)</em> : Use a Dovecot server to authenticate users by relaying credentials from client and handle result.</p>
+<p><code>imap</code> <em>(&gt;= 3.4.1)</em> : Use an IMAP server to authenticate users by relaying credentials from client and handle result.</p>
+<p><code>oauth2</code> <em>(&gt;= 3.5.0)</em> : Use an OAuth2 server to authenticate users by relaying credentials from client and handle result. Oauth2 authentication (SSO) directly on client is not supported. Use herefore <code>http_x_remote_user</code> in combination with SSO support in reverse proxy (e.g. Apache+mod_auth_openidc).</p>
+<p><code>pam</code> <em>(&gt;= 3.5.0)</em> : Use local PAM to authenticate users by relaying credentials from client and handle result..</p>
+<p>Default: <code>none</code> <em>(&lt; 3.5.0)</em> <code>denyall</code> <em>(&gt;= 3.5.0)</em></p>
+</section>
+<section class="level5" id="cache_logins">
+<h5>cache_logins <a class="headerlink" href="#cache_logins">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>Cache successful/failed logins until expiration time. Enable this to avoid overload of authentication backends.</p>
+<p>Default: <code>false</code></p>
+</section>
+<section class="level5" id="cache_successful_logins_expiry">
+<h5>cache_successful_logins_expiry <a class="headerlink" href="#cache_successful_logins_expiry">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>Expiration time of caching successful logins in seconds</p>
+<p>Default: <code>15</code></p>
+</section>
+<section class="level5" id="cache_failed_logins_expiry">
+<h5>cache_failed_logins_expiry <a class="headerlink" href="#cache_failed_logins_expiry">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>Expiration time of caching failed logins in seconds</p>
+<p>Default: <code>90</code></p>
 </section>
 <section class="level5" id="htpasswd_filename">
 <h5>htpasswd_filename <a class="headerlink" href="#htpasswd_filename">&para;</a></h5>
 <p>Path to the htpasswd file.</p>
-<p>Default:</p>
+<p>Default: <code>/etc/radicale/users</code></p>
 </section>
 <section class="level5" id="htpasswd_encryption">
 <h5>htpasswd_encryption <a class="headerlink" href="#htpasswd_encryption">&para;</a></h5>
@@ -677,9 +845,19 @@ user2:password2</code></pre>
 <p><code>plain</code> : Passwords are stored in plaintext. This is obviously not secure! The htpasswd file for this can be created by hand and looks like:</p>
 <pre class="htpasswd"><code>user1:password1
 user2:password2</code></pre>
-<p><code>bcrypt</code> : This uses a modified version of the Blowfish stream cipher. It's very secure. The installation of <strong>radicale[bcrypt]</strong> is required for this.</p>
-<p><code>md5</code> : This uses an iterated md5 digest of the password with a salt.</p>
-<p>Default: <code>md5</code></p>
+<p><code>bcrypt</code> : This uses a modified version of the Blowfish stream cipher. It's very secure. The installation of <strong>bcrypt</strong> is required for this.</p>
+<p><code>md5</code> : This uses an iterated MD5 digest of the password with a salt (nowadays insecure).</p>
+<p><code>sha256</code> <em>(&gt;= 3.1.9)</em> : This uses an iterated SHA-256 digest of the password with a salt.</p>
+<p><code>sha512</code> <em>(&gt;= 3.1.9)</em> : This uses an iterated SHA-512 digest of the password with a salt.</p>
+<p><code>argon2</code> <em>(&gt;= 3.5.3)</em> : This uses an iterated ARGON2 digest of the password with a salt. The installation of <strong>argon2-cffi</strong> is required for this.</p>
+<p><code>autodetect</code> <em>(&gt;= 3.1.9)</em> : This selects autodetection of method per entry.</p>
+<p>Default: <code>md5</code> <em>(&lt; 3.3.0)</em> <code>autodetect</code> <em>(&gt;= 3.3.0)</em></p>
+</section>
+<section class="level5" id="htpasswd_cache">
+<h5>htpasswd_cache <a class="headerlink" href="#htpasswd_cache">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>Enable caching of htpasswd file based on size and mtime_ns</p>
+<p>Default: <code>False</code></p>
 </section>
 <section class="level5" id="delay">
 <h5>delay <a class="headerlink" href="#delay">&para;</a></h5>
@@ -690,6 +868,170 @@ user2:password2</code></pre>
 <h5>realm <a class="headerlink" href="#realm">&para;</a></h5>
 <p>Message displayed in the client when a password is needed.</p>
 <p>Default: <code>Radicale - Password Required</code></p>
+</section>
+<section class="level5" id="ldap_uri">
+<h5>ldap_uri <a class="headerlink" href="#ldap_uri">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The URI to the ldap server</p>
+<p>Default: <code>ldap://localhost</code></p>
+</section>
+<section class="level5" id="ldap_base">
+<h5>ldap_base <a class="headerlink" href="#ldap_base">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>LDAP base DN of the ldap server. This parameter must be provided if auth type is ldap.</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="ldap_reader_dn">
+<h5>ldap_reader_dn <a class="headerlink" href="#ldap_reader_dn">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The DN of a ldap user with read access to get the user accounts. This parameter must be provided if auth type is ldap.</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="ldap_secret">
+<h5>ldap_secret <a class="headerlink" href="#ldap_secret">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The password of the ldap_reader_dn. Either this parameter or <code>ldap_secret_file</code> must be provided if auth type is ldap.</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="ldap_secret_file">
+<h5>ldap_secret_file <a class="headerlink" href="#ldap_secret_file">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>Path of the file containing the password of the ldap_reader_dn. Either this parameter or <code>ldap_secret</code> must be provided if auth type is ldap.</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="ldap_filter">
+<h5>ldap_filter <a class="headerlink" href="#ldap_filter">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The search filter to find the user DN to authenticate by the username. User '{0}' as placeholder for the user name.</p>
+<p>Default: <code>(cn={0})</code></p>
+</section>
+<section class="level5" id="ldap_user_attribute">
+<h5>ldap_user_attribute <a class="headerlink" href="#ldap_user_attribute">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>The LDAP attribute whose value shall be used as the user name after successful authentication</p>
+<p>Default: not set, i.e. the login name given is used directly.</p>
+</section>
+<section class="level5" id="ldap_groups_attribute">
+<h5>ldap_groups_attribute <a class="headerlink" href="#ldap_groups_attribute">&para;</a></h5>
+<p><em>(&gt;= 3.4.0)</em></p>
+<p>The LDAP attribute to read the group memberships from in the authenticated user's LDAP entry.</p>
+<p>If set, load the LDAP group memberships from the attribute given These memberships can be used later on to define rights. This also gives you access to the group calendars, if they exist.</p>
+<ul>
+<li>The group calendar will be placed under collection_root_folder/GROUPS</li>
+<li>The name of the calendar directory is the base64 encoded group name.</li>
+<li>The group calendar folders will not be created automatically. This must be done manually. In the <a href="https://github.com/Kozea/Radicale/wiki/LDAP-authentication">LDAP-authentication section of Radicale's wiki</a> you can find a script to create a group calendar.</li>
+</ul>
+<p>Use 'memberOf' if you want to load groups on Active Directory and alikes, 'groupMembership' on Novell eDirectory, ...</p>
+<p>Default: (unset)</p>
+</section>
+<section class="level5" id="ldap_use_ssl">
+<h5>ldap_use_ssl <a class="headerlink" href="#ldap_use_ssl">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>Use ssl on the ldap connection (soon to be deprecated, use ldap_security instead)</p>
+</section>
+<section class="level5" id="ldap_security">
+<h5>ldap_security <a class="headerlink" href="#ldap_security">&para;</a></h5>
+<p><em>(&gt;= 3.5.2)</em></p>
+<p>Use encryption on the ldap connection. none, tls, starttls</p>
+<p>Default: none</p>
+</section>
+<section class="level5" id="ldap_ssl_verify_mode">
+<h5>ldap_ssl_verify_mode <a class="headerlink" href="#ldap_ssl_verify_mode">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The certificate verification mode. Works for tls and starttls. NONE, OPTIONAL or REQUIRED</p>
+<p>Default: REQUIRED</p>
+</section>
+<section class="level5" id="ldap_ssl_ca_file">
+<h5>ldap_ssl_ca_file <a class="headerlink" href="#ldap_ssl_ca_file">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>The path to the CA file in pem format which is used to certificate the server certificate</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="ldap_ignore_attribute_create_modify_timestamp">
+<h5>ldap_ignore_attribute_create_modify_timestamp <a class="headerlink" href="#ldap_ignore_attribute_create_modify_timestamp">&para;</a></h5>
+<p><em>(&gt;= 3.5.1)</em></p>
+<p>Add modifyTimestamp and createTimestamp to the exclusion list of internal ldap3 client so that these schema attributes are not checked. This is needed at least for Authentik LDAP server as not providing these both attributes.</p>
+<p>Default: false</p>
+</section>
+<section class="level5" id="dovecot_connection_type--af_unix">
+<h5>dovecot_connection_type = AF_UNIX <a class="headerlink" href="#dovecot_connection_type--af_unix">&para;</a></h5>
+<p><em>(&gt;= 3.4.1)</em></p>
+<p>Connection type for dovecot authentication (AF_UNIX|AF_INET|AF_INET6)</p>
+<p>Note: credentials are transmitted in cleartext</p>
+<p>Default: <code>AF_UNIX</code></p>
+</section>
+<section class="level5" id="dovecot_socket">
+<h5>dovecot_socket <a class="headerlink" href="#dovecot_socket">&para;</a></h5>
+<p><em>(&gt;= 3.3.1)</em></p>
+<p>The path to the Dovecot client authentication socket (eg. /run/dovecot/auth-client on Fedora). Radicale must have read / write access to the socket.</p>
+<p>Default: <code>/var/run/dovecot/auth-client</code></p>
+</section>
+<section class="level5" id="dovecot_host">
+<h5>dovecot_host <a class="headerlink" href="#dovecot_host">&para;</a></h5>
+<p><em>(&gt;= 3.4.1)</em></p>
+<p>Host of via network exposed dovecot socket</p>
+<p>Default: <code>localhost</code></p>
+</section>
+<section class="level5" id="dovecot_port">
+<h5>dovecot_port <a class="headerlink" href="#dovecot_port">&para;</a></h5>
+<p><em>(&gt;= 3.4.1)</em></p>
+<p>Port of via network exposed dovecot socket</p>
+<p>Default: <code>12345</code></p>
+</section>
+<section class="level5" id="imap_host">
+<h5>imap_host <a class="headerlink" href="#imap_host">&para;</a></h5>
+<p><em>(&gt;= 3.4.1)</em></p>
+<p>IMAP server hostname: address | address:port | [address]:port | imap.server.tld</p>
+<p>Default: <code>localhost</code></p>
+</section>
+<section class="level5" id="imap_security">
+<h5>imap_security <a class="headerlink" href="#imap_security">&para;</a></h5>
+<p><em>(&gt;= 3.4.1)</em></p>
+<p>Secure the IMAP connection: tls | starttls | none</p>
+<p>Default: <code>tls</code></p>
+</section>
+<section class="level5" id="oauth2_token_endpoint">
+<h5>oauth2_token_endpoint <a class="headerlink" href="#oauth2_token_endpoint">&para;</a></h5>
+<p><em>(&gt;= 3.5.0)</em></p>
+<p>OAuth2 token endpoint URL</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="pam_service">
+<h5>pam_service <a class="headerlink" href="#pam_service">&para;</a></h5>
+<p><em>(&gt;= 3.5.0)</em></p>
+<p>PAM service</p>
+<p>Default: radicale</p>
+</section>
+<section class="level5" id="pam_group_membership">
+<h5>pam_group_membership <a class="headerlink" href="#pam_group_membership">&para;</a></h5>
+<p><em>(&gt;= 3.5.0)</em></p>
+<p>PAM group user should be member of</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="lc_username">
+<h5>lc_username <a class="headerlink" href="#lc_username">&para;</a></h5>
+<p>&Scy;onvert username to lowercase, must be true for case-insensitive auth providers like ldap, kerberos</p>
+<p>Default: <code>False</code></p>
+<p>Note: cannot be enabled together with <code>uc_username</code></p>
+</section>
+<section class="level5" id="uc_username">
+<h5>uc_username <a class="headerlink" href="#uc_username">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>&Scy;onvert username to uppercase, must be true for case-insensitive auth providers like ldap, kerberos</p>
+<p>Default: <code>False</code></p>
+<p>Note: cannot be enabled together with <code>lc_username</code></p>
+</section>
+<section class="level5" id="strip_domain">
+<h5>strip_domain <a class="headerlink" href="#strip_domain">&para;</a></h5>
+<p><em>(&gt;= 3.2.3)</em></p>
+<p>Strip domain from username</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="urldecode_username">
+<h5>urldecode_username <a class="headerlink" href="#urldecode_username">&para;</a></h5>
+<p><em>(&gt;= 3.5.3)</em></p>
+<p>URL Decode the username. When the username is an email, some clients send the username URL-encoded (notably iOS devices) breaking the authentication process (<a href="mailto:user@example.com">user@example.com</a> becomes user%40example.com). This setting will force decoding the username.</p>
+<p>Default: <code>False</code></p>
 </section>
 </section>
 <section class="level4" id="rights">
@@ -709,6 +1051,18 @@ user2:password2</code></pre>
 <h5>file <a class="headerlink" href="#file">&para;</a></h5>
 <p>File for the rights backend <code>from_file</code>. See the <a href="#authentication-and-rights">Rights</a> section.</p>
 </section>
+<section class="level5" id="permit_delete_collection">
+<h5>permit_delete_collection <a class="headerlink" href="#permit_delete_collection">&para;</a></h5>
+<p><em>(&gt;= 3.1.9)</em></p>
+<p>Global control of permission to delete complete collection (default: True)</p>
+<p>If False it can be permitted by permissions per section with: D If True it can be forbidden by permissions per section with: d</p>
+</section>
+<section class="level5" id="permit_overwrite_collection">
+<h5>permit_overwrite_collection <a class="headerlink" href="#permit_overwrite_collection">&para;</a></h5>
+<p><em>(&gt;= 3.3.0)</em></p>
+<p>Global control of permission to overwrite complete collection (default: True)</p>
+<p>If False it can be permitted by permissions per section with: O If True it can be forbidden by permissions per section with: o</p>
+</section>
 </section>
 <section class="level4" id="storage-1">
 <h4>storage <a class="headerlink" href="#storage-1">&para;</a></h4>
@@ -725,14 +1079,88 @@ user2:password2</code></pre>
 <p>Folder for storing local collections, created if not present.</p>
 <p>Default: <code>/var/lib/radicale/collections</code></p>
 </section>
+<section class="level5" id="filesystem_cache_folder">
+<h5>filesystem_cache_folder <a class="headerlink" href="#filesystem_cache_folder">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Folder for storing cache of local collections, created if not present</p>
+<p>Default: (filesystem_folder)</p>
+<p>Note: only used in case of use_cache_subfolder_* options are active</p>
+<p>Note: can be used on multi-instance setup to cache files on local node (see below)</p>
+</section>
+<section class="level5" id="use_cache_subfolder_for_item">
+<h5>use_cache_subfolder_for_item <a class="headerlink" href="#use_cache_subfolder_for_item">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Use subfolder <code>collection-cache</code> for cache file structure of 'item' instead of inside collection folders, created if not present</p>
+<p>Default: <code>False</code></p>
+<p>Note: can be used on multi-instance setup to cache 'item' on local node</p>
+</section>
+<section class="level5" id="use_cache_subfolder_for_history">
+<h5>use_cache_subfolder_for_history <a class="headerlink" href="#use_cache_subfolder_for_history">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Use subfolder <code>collection-cache</code> for cache file structure of 'history' instead of inside collection folders, created if not present</p>
+<p>Default: <code>False</code></p>
+<p>Note: use only on single-instance setup, will break consistency with client in multi-instance setup</p>
+</section>
+<section class="level5" id="use_cache_subfolder_for_synctoken">
+<h5>use_cache_subfolder_for_synctoken <a class="headerlink" href="#use_cache_subfolder_for_synctoken">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Use subfolder <code>collection-cache</code> for cache file structure of 'sync-token' instead of inside collection folders, created if not present</p>
+<p>Default: <code>False</code></p>
+<p>Note: use only on single-instance setup, will break consistency with client in multi-instance setup</p>
+</section>
+<section class="level5" id="use_mtime_and_size_for_item_cache">
+<h5>use_mtime_and_size_for_item_cache <a class="headerlink" href="#use_mtime_and_size_for_item_cache">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Use last modifiction time (nanoseconds) and size (bytes) for 'item' cache instead of SHA256 (improves speed)</p>
+<p>Default: <code>False</code></p>
+<p>Note: check used filesystem mtime precision before enabling</p>
+<p>Note: conversion is done on access, bulk conversion can be done offline using storage verification option <code>radicale --verify-storage</code></p>
+</section>
+<section class="level5" id="folder_umask">
+<h5>folder_umask <a class="headerlink" href="#folder_umask">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Use configured umask for folder creation (not applicable for OS Windows)</p>
+<p>Default: (system-default, usual <code>0022</code>)</p>
+<p>Useful value: <code>0077</code> (user:rw group:- other:-) or <code>0027</code> (user:rw group:r other:-) or <code>0007</code> (user:rw group:rw other:-) or <code>0022</code> (user:rw group:r other:r)</p>
+</section>
 <section class="level5" id="max_sync_token_age">
 <h5>max_sync_token_age <a class="headerlink" href="#max_sync_token_age">&para;</a></h5>
 <p>Delete sync-token that are older than the specified time. (seconds)</p>
 <p>Default: <code>2592000</code></p>
 </section>
+<section class="level5" id="skip_broken_item">
+<h5>skip_broken_item <a class="headerlink" href="#skip_broken_item">&para;</a></h5>
+<p><em>(&gt;= 3.2.2)</em></p>
+<p>Skip broken item instead of triggering an exception</p>
+<p>Default: <code>True</code></p>
+</section>
 <section class="level5" id="hook">
 <h5>hook <a class="headerlink" href="#hook">&para;</a></h5>
 <p>Command that is run after changes to storage. Take a look at the <a href="#versioning-with-git">Versioning with Git</a> tutorial for an example.</p>
+<p>Default:</p>
+<p>Supported placeholders:</p>
+<ul>
+<li><code>%(user)s</code>: logged-in user</li>
+<li><code>%(cwd)s</code>: current working directory <em>(&gt;= 3.5.1)</em></li>
+<li><code>%(path)s</code>: full path of item <em>(&gt;= 3.5.1)</em></li>
+</ul>
+<p>Command will be executed with base directory defined in <code>filesystem_folder</code> (see above)</p>
+</section>
+<section class="level5" id="predefined_collections">
+<h5>predefined_collections <a class="headerlink" href="#predefined_collections">&para;</a></h5>
+<p>Create predefined user collections</p>
+<p>Example:</p>
+<pre><code> {
+   "def-addressbook": {
+      "D:displayname": "Personal Address Book",
+      "tag": "VADDRESSBOOK"
+   },
+   "def-calendar": {
+      "C:supported-calendar-component-set": "VEVENT,VJOURNAL,VTODO",
+      "D:displayname": "Personal Calendar",
+      "tag": "VCALENDAR"
+   }
+ }</code></pre>
 <p>Default:</p>
 </section>
 </section>
@@ -753,40 +1181,132 @@ user2:password2</code></pre>
 <h5>level <a class="headerlink" href="#level">&para;</a></h5>
 <p>Set the logging level.</p>
 <p>Available levels: <strong>debug</strong>, <strong>info</strong>, <strong>warning</strong>, <strong>error</strong>, <strong>critical</strong></p>
-<p>Default: <code>warning</code></p>
+<p>Default: <code>warning</code> <em>(&lt; 3.2.0)</em> <code>info</code> <em>(&gt;= 3.2.0)</em></p>
 </section>
 <section class="level5" id="mask_passwords">
 <h5>mask_passwords <a class="headerlink" href="#mask_passwords">&para;</a></h5>
 <p>Don't include passwords in logs.</p>
 <p>Default: <code>True</code></p>
 </section>
+<section class="level5" id="bad_put_request_content">
+<h5>bad_put_request_content <a class="headerlink" href="#bad_put_request_content">&para;</a></h5>
+<p><em>(&gt;= 3.2.1)</em></p>
+<p>Log bad PUT request content (for further diagnostics)</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="backtrace_on_debug">
+<h5>backtrace_on_debug <a class="headerlink" href="#backtrace_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.2.2)</em></p>
+<p>Log backtrace on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="request_header_on_debug">
+<h5>request_header_on_debug <a class="headerlink" href="#request_header_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.2.2)</em></p>
+<p>Log request on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="request_content_on_debug">
+<h5>request_content_on_debug <a class="headerlink" href="#request_content_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.2.2)</em></p>
+<p>Log request on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="response_content_on_debug">
+<h5>response_content_on_debug <a class="headerlink" href="#response_content_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.2.2)</em></p>
+<p>Log response on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="rights_rule_doesnt_match_on_debug">
+<h5>rights_rule_doesnt_match_on_debug <a class="headerlink" href="#rights_rule_doesnt_match_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.2.3)</em></p>
+<p>Log rights rule which doesn't match on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
+<section class="level5" id="storage_cache_actions_on_debug">
+<h5>storage_cache_actions_on_debug <a class="headerlink" href="#storage_cache_actions_on_debug">&para;</a></h5>
+<p><em>(&gt;= 3.3.2)</em></p>
+<p>Log storage cache actions on level=debug</p>
+<p>Default: <code>False</code></p>
+</section>
 </section>
 <section class="level4" id="headers">
 <h4>headers <a class="headerlink" href="#headers">&para;</a></h4>
 <p>In this section additional HTTP headers that are sent to clients can be specified.</p>
 <p>An example to relax the same-origin policy:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb31-1"><a aria-hidden="true" href="#cb31-1" tabindex="-1"></a><span class="dt">Access-Control-Allow-Origin </span><span class="ot">=</span><span class="st"> *</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb42-1"><a aria-hidden="true" href="#cb42-1" tabindex="-1"></a><span class="dt">Access-Control-Allow-Origin </span><span class="ot">=</span><span class="st"> *</span></span></code></pre></div>
+</section>
+<section class="level4" id="hook-1">
+<h4>hook <a class="headerlink" href="#hook-1">&para;</a></h4>
+<section class="level5" id="type-4">
+<h5>type <a class="headerlink" href="#type-4">&para;</a></h5>
+<p>Hook binding for event changes and deletion notifications.</p>
+<p>Available types:</p>
+<p><code>none</code> : Disabled. Nothing will be notified.</p>
+<p><code>rabbitmq</code> <em>(&gt;= 3.2.0)</em> : Push the message to the rabbitmq server.</p>
+<p>Default: <code>none</code></p>
+</section>
+<section class="level5" id="rabbitmq_endpoint">
+<h5>rabbitmq_endpoint <a class="headerlink" href="#rabbitmq_endpoint">&para;</a></h5>
+<p><em>(&gt;= 3.2.0)</em></p>
+<p>End-point address for rabbitmq server. Ex: amqp://user:password@localhost:5672/</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="rabbitmq_topic">
+<h5>rabbitmq_topic <a class="headerlink" href="#rabbitmq_topic">&para;</a></h5>
+<p><em>(&gt;= 3.2.0)</em></p>
+<p>RabbitMQ topic to publish message.</p>
+<p>Default:</p>
+</section>
+<section class="level5" id="rabbitmq_queue_type">
+<h5>rabbitmq_queue_type <a class="headerlink" href="#rabbitmq_queue_type">&para;</a></h5>
+<p><em>(&gt;= 3.2.0)</em></p>
+<p>RabbitMQ queue type for the topic.</p>
+<p>Default: classic</p>
 </section>
 </section>
-<section class="level3" id="supported-clients">
-<h3>Supported Clients <a class="headerlink" href="#supported-clients">&para;</a></h3>
+<section class="level4" id="reporting">
+<h4>reporting <a class="headerlink" href="#reporting">&para;</a></h4>
+<section class="level5" id="max_freebusy_occurrence">
+<h5>max_freebusy_occurrence <a class="headerlink" href="#max_freebusy_occurrence">&para;</a></h5>
+<p><em>(&gt;= 3.2.3)</em></p>
+<p>When returning a free-busy report, a list of busy time occurrences are generated based on a given time frame. Large time frames could generate a lot of occurrences based on the time frame supplied. This setting limits the lookup to prevent potential denial of service attacks on large time frames. If the limit is reached, an HTTP error is thrown instead of returning the results.</p>
+<p>Default: 10000</p>
+</section>
+</section>
+</section>
+</section>
+<section class="level2" id="supported-clients">
+<h2>Supported Clients <a class="headerlink" href="#supported-clients">&para;</a></h2>
 <p>Radicale has been tested with:</p>
 <ul>
-<li><a href="https://android.com/">Android</a> with <a href="https://www.davx5.com/">DAVx⁵</a> (formerly DAVdroid)</li>
+<li><a href="https://android.com/">Android</a> with <a href="https://www.davx5.com/">DAVx⁵</a> (formerly DAVdroid),</li>
+<li><a href="https://www.onecalendar.nl/">OneCalendar</a></li>
 <li><a href="https://wiki.gnome.org/Apps/Calendar">GNOME Calendar</a>, <a href="https://wiki.gnome.org/Apps/Contacts">Contacts</a> and <a href="https://wiki.gnome.org/Apps/Evolution">Evolution</a></li>
 <li><a href="https://www.mozilla.org/thunderbird/">Mozilla Thunderbird</a> with <a href="https://addons.mozilla.org/thunderbird/addon/cardbook/">CardBook</a> and <a href="https://www.mozilla.org/projects/calendar/">Lightning</a></li>
 <li><a href="https://www.inf-it.com/open-source/clients/infcloud/">InfCloud</a>, <a href="https://www.inf-it.com/open-source/clients/caldavzap/">CalDavZAP</a> and <a href="https://www.inf-it.com/open-source/clients/carddavmate/">CardDavMATE</a></li>
 </ul>
 <p>Many clients do not support the creation of new calendars and address books. You can use Radicale's web interface (e.g. <a href="http://localhost:5232">http://localhost:5232</a>) to create and manage address books and calendars.</p>
 <p>In some clients you can just enter the URL of the Radicale server (e.g. <code>http://localhost:5232</code>) and your username. In others, you have to enter the URL of the collection directly (e.g. <code>http://localhost:5232/user/calendar</code>).</p>
+<p>Some clients (notably macOS's Calendar.app) may silently refuse to include account credentials over unsecured HTTP, leading to unexpected authentication failures. In these cases, you want to make sure the Radicale server is <a href="#ssl">accessible over HTTPS</a>.</p>
 <section class="level4" id="davx⁵">
 <h4>DAVx⁵ <a class="headerlink" href="#davx⁵">&para;</a></h4>
 <p>Enter the URL of the Radicale server (e.g. <code>http://localhost:5232</code>) and your username. DAVx⁵ will show all existing calendars and address books and you can create new.</p>
 </section>
-<section class="level4" id="gnome-calendar-contacts-and-evolution">
-<h4>GNOME Calendar, Contacts and Evolution <a class="headerlink" href="#gnome-calendar-contacts-and-evolution">&para;</a></h4>
-<p><strong>GNOME Calendar</strong> and <strong>Contacts</strong> do not support adding WebDAV calendars and address books directly, but you can add them in <strong>Evolution</strong>.</p>
+<section class="level4" id="onecalendar">
+<h4>OneCalendar <a class="headerlink" href="#onecalendar">&para;</a></h4>
+<p>When adding account, select CalDAV account type, then enter user name, password and the Radicale server (e.g. <code>https://yourdomain:5232</code>). OneCalendar will show all existing calendars and (FIXME: address books), you need to select which ones you want to see. OneCalendar supports many other server types too.</p>
+</section>
+<section class="level4" id="gnome-calendar-contacts">
+<h4>GNOME Calendar, Contacts <a class="headerlink" href="#gnome-calendar-contacts">&para;</a></h4>
+<p>GNOME 46 added CalDAV and CardDAV support to <em>GNOME Online Accounts</em>.</p>
+<p>Open GNOME Settings, navigate to <em>Online Accounts</em> &gt; <em>Connect an Account</em> &gt; <em>Calendar, Contacts and Files</em>. Enter the URL (e.g. <code>https://example.com/radicale</code>) and your credentials then click <em>Sign In</em>. In the pop-up dialog, turn off <em>Files</em>. After adding Radicale in <em>GNOME Online Accounts</em>, it should be available in GNOME Contacts and GNOME Calendar.</p>
+</section>
+<section class="level4" id="evolution">
+<h4>Evolution <a class="headerlink" href="#evolution">&para;</a></h4>
 <p>In <strong>Evolution</strong> add a new calendar and address book respectively with WebDAV. Enter the URL of the Radicale server (e.g. <code>http://localhost:5232</code>) and your username. Clicking on the search button will list the existing calendars and address books.</p>
+<p>Adding CalDAV and CardDAV accounts in Evolution will automatically make them available in GNOME Contacts and GNOME Calendar.</p>
 </section>
 <section class="level4" id="thunderbird">
 <h4>Thunderbird <a class="headerlink" href="#thunderbird">&para;</a></h4>
@@ -798,76 +1318,77 @@ user2:password2</code></pre>
 </section>
 <section class="level4" id="infcloud-caldavzap-and-carddavmate">
 <h4>InfCloud, CalDavZAP and CardDavMATE <a class="headerlink" href="#infcloud-caldavzap-and-carddavmate">&para;</a></h4>
-<p>You can integrate InfCloud into Radicale's web interface with <a href="https://github.com/Unrud/RadicaleInfCloud">RadicaleInfCloud</a>. No additional configuration is required.</p>
-<p>Set the URL of the Radicale server in <code>config.js</code>. If <strong>InfCloud</strong> is not hosted on the same server and port as Radicale, the browser will deny access to the Radicale server, because of the <a href="https://en.wikipedia.org/wiki/Same-origin_policy">same-origin policy</a>. You have to add additional HTTP header in the <code>headers</code> section of Radicale's configuration. The documentation of <strong>InfCloud</strong> has more details on this.</p>
+<p>You can integrate InfCloud into Radicale's web interface with by simply download latest package from <a href="https://www.inf-it.com/open-source/clients/infcloud/">InfCloud</a> and extract content to new folder <code>infcloud</code> in <code>radicale/web/internal_data/</code>.</p>
+<p>No further adjustments are required as content is adjusted on the fly (tested with 0.13.1).</p>
+<p>See also <a href="https://github.com/Kozea/Radicale/wiki/Client-InfCloud">Wiki/Client InfCloud</a>.</p>
 </section>
 <section class="level4" id="command-line">
 <h4>Command line <a class="headerlink" href="#command-line">&para;</a></h4>
 <p>This is not the recommended way of creating and managing your calendars and address books. Use Radicale's web interface or a client with support for it (e.g. <strong>DAVx⁵</strong>).</p>
 <p>To create a new calendar run something like:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a aria-hidden="true" href="#cb32-1" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-u</span> user <span class="at">-X</span> MKCOL <span class="st">'http://localhost:5232/user/calendar'</span> <span class="at">--data</span> <span class="dt">\</span></span>
-<span id="cb32-2"><a aria-hidden="true" href="#cb32-2" tabindex="-1"></a><span class="st">'&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span>
-<span id="cb32-3"><a aria-hidden="true" href="#cb32-3" tabindex="-1"></a><span class="st">&lt;create xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:I="http://apple.com/ns/ical/"&gt;</span></span>
-<span id="cb32-4"><a aria-hidden="true" href="#cb32-4" tabindex="-1"></a><span class="st">  &lt;set&gt;</span></span>
-<span id="cb32-5"><a aria-hidden="true" href="#cb32-5" tabindex="-1"></a><span class="st">    &lt;prop&gt;</span></span>
-<span id="cb32-6"><a aria-hidden="true" href="#cb32-6" tabindex="-1"></a><span class="st">      &lt;resourcetype&gt;</span></span>
-<span id="cb32-7"><a aria-hidden="true" href="#cb32-7" tabindex="-1"></a><span class="st">        &lt;collection /&gt;</span></span>
-<span id="cb32-8"><a aria-hidden="true" href="#cb32-8" tabindex="-1"></a><span class="st">        &lt;C:calendar /&gt;</span></span>
-<span id="cb32-9"><a aria-hidden="true" href="#cb32-9" tabindex="-1"></a><span class="st">      &lt;/resourcetype&gt;</span></span>
-<span id="cb32-10"><a aria-hidden="true" href="#cb32-10" tabindex="-1"></a><span class="st">      &lt;C:supported-calendar-component-set&gt;</span></span>
-<span id="cb32-11"><a aria-hidden="true" href="#cb32-11" tabindex="-1"></a><span class="st">        &lt;C:comp name="VEVENT" /&gt;</span></span>
-<span id="cb32-12"><a aria-hidden="true" href="#cb32-12" tabindex="-1"></a><span class="st">        &lt;C:comp name="VJOURNAL" /&gt;</span></span>
-<span id="cb32-13"><a aria-hidden="true" href="#cb32-13" tabindex="-1"></a><span class="st">        &lt;C:comp name="VTODO" /&gt;</span></span>
-<span id="cb32-14"><a aria-hidden="true" href="#cb32-14" tabindex="-1"></a><span class="st">      &lt;/C:supported-calendar-component-set&gt;</span></span>
-<span id="cb32-15"><a aria-hidden="true" href="#cb32-15" tabindex="-1"></a><span class="st">      &lt;displayname&gt;Calendar&lt;/displayname&gt;</span></span>
-<span id="cb32-16"><a aria-hidden="true" href="#cb32-16" tabindex="-1"></a><span class="st">      &lt;C:calendar-description&gt;Example calendar&lt;/C:calendar-description&gt;</span></span>
-<span id="cb32-17"><a aria-hidden="true" href="#cb32-17" tabindex="-1"></a><span class="st">      &lt;I:calendar-color&gt;#ff0000ff&lt;/I:calendar-color&gt;</span></span>
-<span id="cb32-18"><a aria-hidden="true" href="#cb32-18" tabindex="-1"></a><span class="st">    &lt;/prop&gt;</span></span>
-<span id="cb32-19"><a aria-hidden="true" href="#cb32-19" tabindex="-1"></a><span class="st">  &lt;/set&gt;</span></span>
-<span id="cb32-20"><a aria-hidden="true" href="#cb32-20" tabindex="-1"></a><span class="st">&lt;/create&gt;'</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a aria-hidden="true" href="#cb43-1" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-u</span> user <span class="at">-X</span> MKCOL <span class="st">'http://localhost:5232/user/calendar'</span> <span class="at">--data</span> <span class="dt">\</span></span>
+<span id="cb43-2"><a aria-hidden="true" href="#cb43-2" tabindex="-1"></a><span class="st">'&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span>
+<span id="cb43-3"><a aria-hidden="true" href="#cb43-3" tabindex="-1"></a><span class="st">&lt;create xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:I="http://apple.com/ns/ical/"&gt;</span></span>
+<span id="cb43-4"><a aria-hidden="true" href="#cb43-4" tabindex="-1"></a><span class="st">  &lt;set&gt;</span></span>
+<span id="cb43-5"><a aria-hidden="true" href="#cb43-5" tabindex="-1"></a><span class="st">    &lt;prop&gt;</span></span>
+<span id="cb43-6"><a aria-hidden="true" href="#cb43-6" tabindex="-1"></a><span class="st">      &lt;resourcetype&gt;</span></span>
+<span id="cb43-7"><a aria-hidden="true" href="#cb43-7" tabindex="-1"></a><span class="st">        &lt;collection /&gt;</span></span>
+<span id="cb43-8"><a aria-hidden="true" href="#cb43-8" tabindex="-1"></a><span class="st">        &lt;C:calendar /&gt;</span></span>
+<span id="cb43-9"><a aria-hidden="true" href="#cb43-9" tabindex="-1"></a><span class="st">      &lt;/resourcetype&gt;</span></span>
+<span id="cb43-10"><a aria-hidden="true" href="#cb43-10" tabindex="-1"></a><span class="st">      &lt;C:supported-calendar-component-set&gt;</span></span>
+<span id="cb43-11"><a aria-hidden="true" href="#cb43-11" tabindex="-1"></a><span class="st">        &lt;C:comp name="VEVENT" /&gt;</span></span>
+<span id="cb43-12"><a aria-hidden="true" href="#cb43-12" tabindex="-1"></a><span class="st">        &lt;C:comp name="VJOURNAL" /&gt;</span></span>
+<span id="cb43-13"><a aria-hidden="true" href="#cb43-13" tabindex="-1"></a><span class="st">        &lt;C:comp name="VTODO" /&gt;</span></span>
+<span id="cb43-14"><a aria-hidden="true" href="#cb43-14" tabindex="-1"></a><span class="st">      &lt;/C:supported-calendar-component-set&gt;</span></span>
+<span id="cb43-15"><a aria-hidden="true" href="#cb43-15" tabindex="-1"></a><span class="st">      &lt;displayname&gt;Calendar&lt;/displayname&gt;</span></span>
+<span id="cb43-16"><a aria-hidden="true" href="#cb43-16" tabindex="-1"></a><span class="st">      &lt;C:calendar-description&gt;Example calendar&lt;/C:calendar-description&gt;</span></span>
+<span id="cb43-17"><a aria-hidden="true" href="#cb43-17" tabindex="-1"></a><span class="st">      &lt;I:calendar-color&gt;#ff0000ff&lt;/I:calendar-color&gt;</span></span>
+<span id="cb43-18"><a aria-hidden="true" href="#cb43-18" tabindex="-1"></a><span class="st">    &lt;/prop&gt;</span></span>
+<span id="cb43-19"><a aria-hidden="true" href="#cb43-19" tabindex="-1"></a><span class="st">  &lt;/set&gt;</span></span>
+<span id="cb43-20"><a aria-hidden="true" href="#cb43-20" tabindex="-1"></a><span class="st">&lt;/create&gt;'</span></span></code></pre></div>
 <p>To create a new address book run something like:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a aria-hidden="true" href="#cb33-1" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-u</span> user <span class="at">-X</span> MKCOL <span class="st">'http://localhost:5232/user/addressbook'</span> <span class="at">--data</span> <span class="dt">\</span></span>
-<span id="cb33-2"><a aria-hidden="true" href="#cb33-2" tabindex="-1"></a><span class="st">'&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span>
-<span id="cb33-3"><a aria-hidden="true" href="#cb33-3" tabindex="-1"></a><span class="st">&lt;create xmlns="DAV:" xmlns:CR="urn:ietf:params:xml:ns:carddav"&gt;</span></span>
-<span id="cb33-4"><a aria-hidden="true" href="#cb33-4" tabindex="-1"></a><span class="st">  &lt;set&gt;</span></span>
-<span id="cb33-5"><a aria-hidden="true" href="#cb33-5" tabindex="-1"></a><span class="st">    &lt;prop&gt;</span></span>
-<span id="cb33-6"><a aria-hidden="true" href="#cb33-6" tabindex="-1"></a><span class="st">      &lt;resourcetype&gt;</span></span>
-<span id="cb33-7"><a aria-hidden="true" href="#cb33-7" tabindex="-1"></a><span class="st">        &lt;collection /&gt;</span></span>
-<span id="cb33-8"><a aria-hidden="true" href="#cb33-8" tabindex="-1"></a><span class="st">        &lt;CR:addressbook /&gt;</span></span>
-<span id="cb33-9"><a aria-hidden="true" href="#cb33-9" tabindex="-1"></a><span class="st">      &lt;/resourcetype&gt;</span></span>
-<span id="cb33-10"><a aria-hidden="true" href="#cb33-10" tabindex="-1"></a><span class="st">      &lt;displayname&gt;Address book&lt;/displayname&gt;</span></span>
-<span id="cb33-11"><a aria-hidden="true" href="#cb33-11" tabindex="-1"></a><span class="st">      &lt;CR:addressbook-description&gt;Example address book&lt;/CR:addressbook-description&gt;</span></span>
-<span id="cb33-12"><a aria-hidden="true" href="#cb33-12" tabindex="-1"></a><span class="st">    &lt;/prop&gt;</span></span>
-<span id="cb33-13"><a aria-hidden="true" href="#cb33-13" tabindex="-1"></a><span class="st">  &lt;/set&gt;</span></span>
-<span id="cb33-14"><a aria-hidden="true" href="#cb33-14" tabindex="-1"></a><span class="st">&lt;/create&gt;'</span></span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a aria-hidden="true" href="#cb44-1" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-u</span> user <span class="at">-X</span> MKCOL <span class="st">'http://localhost:5232/user/addressbook'</span> <span class="at">--data</span> <span class="dt">\</span></span>
+<span id="cb44-2"><a aria-hidden="true" href="#cb44-2" tabindex="-1"></a><span class="st">'&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span></span>
+<span id="cb44-3"><a aria-hidden="true" href="#cb44-3" tabindex="-1"></a><span class="st">&lt;create xmlns="DAV:" xmlns:CR="urn:ietf:params:xml:ns:carddav"&gt;</span></span>
+<span id="cb44-4"><a aria-hidden="true" href="#cb44-4" tabindex="-1"></a><span class="st">  &lt;set&gt;</span></span>
+<span id="cb44-5"><a aria-hidden="true" href="#cb44-5" tabindex="-1"></a><span class="st">    &lt;prop&gt;</span></span>
+<span id="cb44-6"><a aria-hidden="true" href="#cb44-6" tabindex="-1"></a><span class="st">      &lt;resourcetype&gt;</span></span>
+<span id="cb44-7"><a aria-hidden="true" href="#cb44-7" tabindex="-1"></a><span class="st">        &lt;collection /&gt;</span></span>
+<span id="cb44-8"><a aria-hidden="true" href="#cb44-8" tabindex="-1"></a><span class="st">        &lt;CR:addressbook /&gt;</span></span>
+<span id="cb44-9"><a aria-hidden="true" href="#cb44-9" tabindex="-1"></a><span class="st">      &lt;/resourcetype&gt;</span></span>
+<span id="cb44-10"><a aria-hidden="true" href="#cb44-10" tabindex="-1"></a><span class="st">      &lt;displayname&gt;Address book&lt;/displayname&gt;</span></span>
+<span id="cb44-11"><a aria-hidden="true" href="#cb44-11" tabindex="-1"></a><span class="st">      &lt;CR:addressbook-description&gt;Example address book&lt;/CR:addressbook-description&gt;</span></span>
+<span id="cb44-12"><a aria-hidden="true" href="#cb44-12" tabindex="-1"></a><span class="st">    &lt;/prop&gt;</span></span>
+<span id="cb44-13"><a aria-hidden="true" href="#cb44-13" tabindex="-1"></a><span class="st">  &lt;/set&gt;</span></span>
+<span id="cb44-14"><a aria-hidden="true" href="#cb44-14" tabindex="-1"></a><span class="st">&lt;/create&gt;'</span></span></code></pre></div>
 <p>The collection <code>/USERNAME</code> will be created automatically, when the user authenticates to Radicale for the first time. Clients with automatic discovery of collections will only show calendars and address books that are direct children of the path <code>/USERNAME/</code>.</p>
 <p>Delete the collections by running something like:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a aria-hidden="true" href="#cb34-1" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-u</span> user <span class="at">-X</span> DELETE <span class="st">'http://localhost:5232/user/calendar'</span></span></code></pre></div>
-</section>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a aria-hidden="true" href="#cb45-1" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-u</span> user <span class="at">-X</span> DELETE <span class="st">'http://localhost:5232/user/calendar'</span></span></code></pre></div>
+<p>Note: requires config/option <code>permit_delete_collection = True</code></p>
 </section>
 <section class="level3" id="authentication-and-rights">
 <h3>Authentication and Rights <a class="headerlink" href="#authentication-and-rights">&para;</a></h3>
 <p>This section describes the format of the rights file for the <code>from_file</code> authentication backend. The configuration option <code>file</code> in the <code>rights</code> section must point to the rights file.</p>
 <p>The recommended rights method is <code>owner_only</code>. If access to calendars and address books outside the home directory of users (that's <code>/USERNAME/</code>) is granted, clients won't detect these collections and will not show them to the user. This is only useful if you access calendars and address books directly via URL.</p>
 <p>An example rights file:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb35-1"><a aria-hidden="true" href="#cb35-1" tabindex="-1"></a><span class="co"># Allow reading root collection for authenticated users</span></span>
-<span id="cb35-2"><a aria-hidden="true" href="#cb35-2" tabindex="-1"></a><span class="kw">[root]</span></span>
-<span id="cb35-3"><a aria-hidden="true" href="#cb35-3" tabindex="-1"></a><span class="dt">user: .+</span></span>
-<span id="cb35-4"><a aria-hidden="true" href="#cb35-4" tabindex="-1"></a><span class="dt">collection:</span></span>
-<span id="cb35-5"><a aria-hidden="true" href="#cb35-5" tabindex="-1"></a><span class="dt">permissions: R</span></span>
-<span id="cb35-6"><a aria-hidden="true" href="#cb35-6" tabindex="-1"></a></span>
-<span id="cb35-7"><a aria-hidden="true" href="#cb35-7" tabindex="-1"></a><span class="co"># Allow reading and writing principal collection (same as username)</span></span>
-<span id="cb35-8"><a aria-hidden="true" href="#cb35-8" tabindex="-1"></a><span class="kw">[principal]</span></span>
-<span id="cb35-9"><a aria-hidden="true" href="#cb35-9" tabindex="-1"></a><span class="dt">user: .+</span></span>
-<span id="cb35-10"><a aria-hidden="true" href="#cb35-10" tabindex="-1"></a><span class="dt">collection: {user}</span></span>
-<span id="cb35-11"><a aria-hidden="true" href="#cb35-11" tabindex="-1"></a><span class="dt">permissions: RW</span></span>
-<span id="cb35-12"><a aria-hidden="true" href="#cb35-12" tabindex="-1"></a></span>
-<span id="cb35-13"><a aria-hidden="true" href="#cb35-13" tabindex="-1"></a><span class="co"># Allow reading and writing calendars and address books that are direct</span></span>
-<span id="cb35-14"><a aria-hidden="true" href="#cb35-14" tabindex="-1"></a><span class="co"># children of the principal collection</span></span>
-<span id="cb35-15"><a aria-hidden="true" href="#cb35-15" tabindex="-1"></a><span class="kw">[calendars]</span></span>
-<span id="cb35-16"><a aria-hidden="true" href="#cb35-16" tabindex="-1"></a><span class="dt">user: .+</span></span>
-<span id="cb35-17"><a aria-hidden="true" href="#cb35-17" tabindex="-1"></a><span class="dt">collection: {user}/</span><span class="kw">[^/]</span><span class="dt">+</span></span>
-<span id="cb35-18"><a aria-hidden="true" href="#cb35-18" tabindex="-1"></a><span class="dt">permissions: rw</span></span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb46-1"><a aria-hidden="true" href="#cb46-1" tabindex="-1"></a><span class="co"># Allow reading root collection for authenticated users</span></span>
+<span id="cb46-2"><a aria-hidden="true" href="#cb46-2" tabindex="-1"></a><span class="kw">[root]</span></span>
+<span id="cb46-3"><a aria-hidden="true" href="#cb46-3" tabindex="-1"></a><span class="dt">user: .+</span></span>
+<span id="cb46-4"><a aria-hidden="true" href="#cb46-4" tabindex="-1"></a><span class="dt">collection:</span></span>
+<span id="cb46-5"><a aria-hidden="true" href="#cb46-5" tabindex="-1"></a><span class="dt">permissions: R</span></span>
+<span id="cb46-6"><a aria-hidden="true" href="#cb46-6" tabindex="-1"></a></span>
+<span id="cb46-7"><a aria-hidden="true" href="#cb46-7" tabindex="-1"></a><span class="co"># Allow reading and writing principal collection (same as username)</span></span>
+<span id="cb46-8"><a aria-hidden="true" href="#cb46-8" tabindex="-1"></a><span class="kw">[principal]</span></span>
+<span id="cb46-9"><a aria-hidden="true" href="#cb46-9" tabindex="-1"></a><span class="dt">user: .+</span></span>
+<span id="cb46-10"><a aria-hidden="true" href="#cb46-10" tabindex="-1"></a><span class="dt">collection: {user}</span></span>
+<span id="cb46-11"><a aria-hidden="true" href="#cb46-11" tabindex="-1"></a><span class="dt">permissions: RW</span></span>
+<span id="cb46-12"><a aria-hidden="true" href="#cb46-12" tabindex="-1"></a></span>
+<span id="cb46-13"><a aria-hidden="true" href="#cb46-13" tabindex="-1"></a><span class="co"># Allow reading and writing calendars and address books that are direct</span></span>
+<span id="cb46-14"><a aria-hidden="true" href="#cb46-14" tabindex="-1"></a><span class="co"># children of the principal collection</span></span>
+<span id="cb46-15"><a aria-hidden="true" href="#cb46-15" tabindex="-1"></a><span class="kw">[calendars]</span></span>
+<span id="cb46-16"><a aria-hidden="true" href="#cb46-16" tabindex="-1"></a><span class="dt">user: .+</span></span>
+<span id="cb46-17"><a aria-hidden="true" href="#cb46-17" tabindex="-1"></a><span class="dt">collection: {user}/</span><span class="kw">[^/]</span><span class="dt">+</span></span>
+<span id="cb46-18"><a aria-hidden="true" href="#cb46-18" tabindex="-1"></a><span class="dt">permissions: rw</span></span></code></pre></div>
 <p>The titles of the sections are ignored (but must be unique). The keys <code>user</code> and <code>collection</code> contain regular expressions, that are matched against the username and the path of the collection. Permissions from the first matching section are used. If no section matches, access gets denied.</p>
 <p>The username is empty for anonymous users. Therefore, the regex <code>.+</code> only matches authenticated users and <code>.*</code> matches everyone (including anonymous users).</p>
 <p>The path of the collection is separated by <code>/</code> and has no leading or trailing <code>/</code>. Therefore, the path of the root collection is empty.</p>
@@ -880,6 +1401,10 @@ user2:password2</code></pre>
 <li><strong>i:</strong> subset of <strong>r</strong> that only allows direct access via HTTP method GET (CalDAV/CardDAV is susceptible to expensive search requests)</li>
 <li><strong>W:</strong> write collections (excluding address books and calendars)</li>
 <li><strong>w:</strong> write address book and calendar collections</li>
+<li><strong>D:</strong> permit delete of collection in case permit_delete_collection=False <em>(&gt;= 3.3.0)</em></li>
+<li><strong>d:</strong> forbid delete of collection in case permit_delete_collection=True <em>(&gt;= 3.3.0)</em></li>
+<li><strong>O:</strong> permit overwrite of collection in case permit_overwrite_collection=False</li>
+<li><strong>o:</strong> forbid overwrite of collection in case permit_overwrite_collection=True</li>
 </ul>
 </section>
 <section class="level3" id="storage-2">
@@ -906,10 +1431,10 @@ user2:password2</code></pre>
 <section class="level5" id="linux-shell-scripts">
 <h5>Linux shell scripts <a class="headerlink" href="#linux-shell-scripts">&para;</a></h5>
 <p>Use the <a href="https://manpages.debian.org/unstable/util-linux/flock.1.en.html">flock</a> utility.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a aria-hidden="true" href="#cb36-1" tabindex="-1"></a><span class="co"># Exclusive</span></span>
-<span id="cb36-2"><a aria-hidden="true" href="#cb36-2" tabindex="-1"></a><span class="ex">$</span> flock <span class="at">--exclusive</span> /path/to/storage/.Radicale.lock COMMAND</span>
-<span id="cb36-3"><a aria-hidden="true" href="#cb36-3" tabindex="-1"></a><span class="co"># Shared</span></span>
-<span id="cb36-4"><a aria-hidden="true" href="#cb36-4" tabindex="-1"></a><span class="ex">$</span> flock <span class="at">--shared</span> /path/to/storage/.Radicale.lock COMMAND</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb47-1"><a aria-hidden="true" href="#cb47-1" tabindex="-1"></a><span class="co"># Exclusive</span></span>
+<span id="cb47-2"><a aria-hidden="true" href="#cb47-2" tabindex="-1"></a><span class="ex">$</span> flock <span class="at">--exclusive</span> /path/to/storage/.Radicale.lock COMMAND</span>
+<span id="cb47-3"><a aria-hidden="true" href="#cb47-3" tabindex="-1"></a><span class="co"># Shared</span></span>
+<span id="cb47-4"><a aria-hidden="true" href="#cb47-4" tabindex="-1"></a><span class="ex">$</span> flock <span class="at">--shared</span> /path/to/storage/.Radicale.lock COMMAND</span></code></pre></div>
 </section>
 <section class="level5" id="linux-and-macos">
 <h5>Linux and MacOS <a class="headerlink" href="#linux-and-macos">&para;</a></h5>
@@ -923,16 +1448,16 @@ user2:password2</code></pre>
 <section class="level4" id="manually-creating-collections">
 <h4>Manually creating collections <a class="headerlink" href="#manually-creating-collections">&para;</a></h4>
 <p>To create a new collection, you have to create the corresponding folder in the file system storage (e.g. <code>collection-root/user/calendar</code>). To tell Radicale and clients that the collection is a calendar, you have to create the file <code>.Radicale.props</code> with the following content in the folder:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb37-1"><a aria-hidden="true" href="#cb37-1" tabindex="-1"></a><span class="fu">{</span><span class="dt">"tag"</span><span class="fu">:</span> <span class="st">"VCALENDAR"</span><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb48-1"><a aria-hidden="true" href="#cb48-1" tabindex="-1"></a><span class="fu">{</span><span class="dt">"tag"</span><span class="fu">:</span> <span class="st">"VCALENDAR"</span><span class="fu">}</span></span></code></pre></div>
 <p>The calendar is now available at the URL path <code>/user/calendar</code>. For address books the file must contain:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb38-1"><a aria-hidden="true" href="#cb38-1" tabindex="-1"></a><span class="fu">{</span><span class="dt">"tag"</span><span class="fu">:</span> <span class="st">"VADDRESSBOOK"</span><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb49-1"><a aria-hidden="true" href="#cb49-1" tabindex="-1"></a><span class="fu">{</span><span class="dt">"tag"</span><span class="fu">:</span> <span class="st">"VADDRESSBOOK"</span><span class="fu">}</span></span></code></pre></div>
 <p>Calendar and address book collections must not have any child collections. Clients with automatic discovery of collections will only show calendars and address books that are direct children of the path <code>/USERNAME/</code>.</p>
 <p>Delete collections by deleting the corresponding folders.</p>
 </section>
 </section>
-<section class="level3" id="logging-1">
-<h3>Logging <a class="headerlink" href="#logging-1">&para;</a></h3>
-<p>Radicale logs to <code>stderr</code>. The verbosity of the log output can be controlled with <code>--debug</code> command line argument or the <code>level</code> configuration option in the <code>logging</code> section.</p>
+<section class="level3" id="logging-overview">
+<h3>Logging overview <a class="headerlink" href="#logging-overview">&para;</a></h3>
+<p>Radicale logs to <code>stderr</code>. The verbosity of the log output can be controlled with <code>--debug</code> command line argument or the <code>level</code> configuration option in the <a href="#logging">logging</a> section.</p>
 </section>
 <section class="level3" id="architecture">
 <h3>Architecture <a class="headerlink" href="#architecture">&para;</a></h3>
@@ -994,7 +1519,7 @@ user2:password2</code></pre>
 <p><code>app</code> : This is the core part of Radicale, with the code for the CalDAV/CardDAV server. The code managing the different HTTP requests according to the CalDAV/CardDAV specification can be found here.</p>
 <p><code>auth</code> : Used for authenticating users based on username and password, mapping usernames to internal users and optionally retrieving credentials from the environment.</p>
 <p><code>config</code> : Contains the code for managing configuration and loading settings from files.</p>
-<p><code>&igrave;tem</code> : Internal representation of address book and calendar entries. Based on <a href="https://eventable.github.io/vobject/">VObject</a>.</p>
+<p><code>&igrave;tem</code> : Internal representation of address book and calendar entries. Based on <a href="https://github.com/py-vobject/vobject/">VObject</a>.</p>
 <p><code>log</code> : The logger for Radicale based on the default Python logging module.</p>
 <p><code>rights</code> : This module is used by Radicale to manage access rights to collections, address books and calendars.</p>
 <p><code>server</code> : The integrated HTTP server for standalone use.</p>
@@ -1013,42 +1538,42 @@ user2:password2</code></pre>
 <h4>Getting started <a class="headerlink" href="#getting-started-1">&para;</a></h4>
 <p>To get started we walk through the creation of a simple authentication plugin, that accepts login attempts with a static password.</p>
 <p>The easiest way to develop and install <strong>python</strong> modules is <a href="https://docs.python.org/3/distutils/setupscript.html">Distutils</a>. For a minimal setup create the file <code>setup.py</code> with the following content in an empty folder:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a aria-hidden="true" href="#cb39-1" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
-<span id="cb39-2"><a aria-hidden="true" href="#cb39-2" tabindex="-1"></a></span>
-<span id="cb39-3"><a aria-hidden="true" href="#cb39-3" tabindex="-1"></a><span class="im">from</span> distutils.core <span class="im">import</span> setup</span>
-<span id="cb39-4"><a aria-hidden="true" href="#cb39-4" tabindex="-1"></a></span>
-<span id="cb39-5"><a aria-hidden="true" href="#cb39-5" tabindex="-1"></a>setup(name<span class="op">=</span><span class="st">"radicale_static_password_auth"</span>,</span>
-<span id="cb39-6"><a aria-hidden="true" href="#cb39-6" tabindex="-1"></a>      packages<span class="op">=</span>[<span class="st">"radicale_static_password_auth"</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb50-1"><a aria-hidden="true" href="#cb50-1" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb50-2"><a aria-hidden="true" href="#cb50-2" tabindex="-1"></a></span>
+<span id="cb50-3"><a aria-hidden="true" href="#cb50-3" tabindex="-1"></a><span class="im">from</span> distutils.core <span class="im">import</span> setup</span>
+<span id="cb50-4"><a aria-hidden="true" href="#cb50-4" tabindex="-1"></a></span>
+<span id="cb50-5"><a aria-hidden="true" href="#cb50-5" tabindex="-1"></a>setup(name<span class="op">=</span><span class="st">"radicale_static_password_auth"</span>,</span>
+<span id="cb50-6"><a aria-hidden="true" href="#cb50-6" tabindex="-1"></a>      packages<span class="op">=</span>[<span class="st">"radicale_static_password_auth"</span>])</span></code></pre></div>
 <p>In the same folder create the sub-folder <code>radicale_static_password_auth</code>. The folder must have the same name as specified in <code>packages</code> above.</p>
 <p>Create the file <code>__init__.py</code> in the <code>radicale_static_password_auth</code> folder with the following content:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a aria-hidden="true" href="#cb40-1" tabindex="-1"></a><span class="im">from</span> radicale.auth <span class="im">import</span> BaseAuth</span>
-<span id="cb40-2"><a aria-hidden="true" href="#cb40-2" tabindex="-1"></a><span class="im">from</span> radicale.log <span class="im">import</span> logger</span>
-<span id="cb40-3"><a aria-hidden="true" href="#cb40-3" tabindex="-1"></a></span>
-<span id="cb40-4"><a aria-hidden="true" href="#cb40-4" tabindex="-1"></a>PLUGIN_CONFIG_SCHEMA <span class="op">=</span> {<span class="st">"auth"</span>: {</span>
-<span id="cb40-5"><a aria-hidden="true" href="#cb40-5" tabindex="-1"></a>    <span class="st">"password"</span>: {<span class="st">"value"</span>: <span class="st">""</span>, <span class="st">"type"</span>: <span class="bu">str</span>}}}</span>
-<span id="cb40-6"><a aria-hidden="true" href="#cb40-6" tabindex="-1"></a></span>
-<span id="cb40-7"><a aria-hidden="true" href="#cb40-7" tabindex="-1"></a></span>
-<span id="cb40-8"><a aria-hidden="true" href="#cb40-8" tabindex="-1"></a><span class="kw">class</span> Auth(BaseAuth):</span>
-<span id="cb40-9"><a aria-hidden="true" href="#cb40-9" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, configuration):</span>
-<span id="cb40-10"><a aria-hidden="true" href="#cb40-10" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(configuration.copy(PLUGIN_CONFIG_SCHEMA))</span>
-<span id="cb40-11"><a aria-hidden="true" href="#cb40-11" tabindex="-1"></a></span>
-<span id="cb40-12"><a aria-hidden="true" href="#cb40-12" tabindex="-1"></a>    <span class="kw">def</span> login(<span class="va">self</span>, login, password):</span>
-<span id="cb40-13"><a aria-hidden="true" href="#cb40-13" tabindex="-1"></a>        <span class="co"># Get password from configuration option</span></span>
-<span id="cb40-14"><a aria-hidden="true" href="#cb40-14" tabindex="-1"></a>        static_password <span class="op">=</span> <span class="va">self</span>.configuration.get(<span class="st">"auth"</span>, <span class="st">"password"</span>)</span>
-<span id="cb40-15"><a aria-hidden="true" href="#cb40-15" tabindex="-1"></a>        <span class="co"># Check authentication</span></span>
-<span id="cb40-16"><a aria-hidden="true" href="#cb40-16" tabindex="-1"></a>        logger.info(<span class="st">"Login attempt by </span><span class="sc">%r</span><span class="st"> with password </span><span class="sc">%r</span><span class="st">"</span>,</span>
-<span id="cb40-17"><a aria-hidden="true" href="#cb40-17" tabindex="-1"></a>                    login, password)</span>
-<span id="cb40-18"><a aria-hidden="true" href="#cb40-18" tabindex="-1"></a>        <span class="cf">if</span> password <span class="op">==</span> static_password:</span>
-<span id="cb40-19"><a aria-hidden="true" href="#cb40-19" tabindex="-1"></a>            <span class="cf">return</span> login</span>
-<span id="cb40-20"><a aria-hidden="true" href="#cb40-20" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span></span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb51-1"><a aria-hidden="true" href="#cb51-1" tabindex="-1"></a><span class="im">from</span> radicale.auth <span class="im">import</span> BaseAuth</span>
+<span id="cb51-2"><a aria-hidden="true" href="#cb51-2" tabindex="-1"></a><span class="im">from</span> radicale.log <span class="im">import</span> logger</span>
+<span id="cb51-3"><a aria-hidden="true" href="#cb51-3" tabindex="-1"></a></span>
+<span id="cb51-4"><a aria-hidden="true" href="#cb51-4" tabindex="-1"></a>PLUGIN_CONFIG_SCHEMA <span class="op">=</span> {<span class="st">"auth"</span>: {</span>
+<span id="cb51-5"><a aria-hidden="true" href="#cb51-5" tabindex="-1"></a>    <span class="st">"password"</span>: {<span class="st">"value"</span>: <span class="st">""</span>, <span class="st">"type"</span>: <span class="bu">str</span>}}}</span>
+<span id="cb51-6"><a aria-hidden="true" href="#cb51-6" tabindex="-1"></a></span>
+<span id="cb51-7"><a aria-hidden="true" href="#cb51-7" tabindex="-1"></a></span>
+<span id="cb51-8"><a aria-hidden="true" href="#cb51-8" tabindex="-1"></a><span class="kw">class</span> Auth(BaseAuth):</span>
+<span id="cb51-9"><a aria-hidden="true" href="#cb51-9" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, configuration):</span>
+<span id="cb51-10"><a aria-hidden="true" href="#cb51-10" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(configuration.copy(PLUGIN_CONFIG_SCHEMA))</span>
+<span id="cb51-11"><a aria-hidden="true" href="#cb51-11" tabindex="-1"></a></span>
+<span id="cb51-12"><a aria-hidden="true" href="#cb51-12" tabindex="-1"></a>    <span class="kw">def</span> _login(<span class="va">self</span>, login, password):</span>
+<span id="cb51-13"><a aria-hidden="true" href="#cb51-13" tabindex="-1"></a>        <span class="co"># Get password from configuration option</span></span>
+<span id="cb51-14"><a aria-hidden="true" href="#cb51-14" tabindex="-1"></a>        static_password <span class="op">=</span> <span class="va">self</span>.configuration.get(<span class="st">"auth"</span>, <span class="st">"password"</span>)</span>
+<span id="cb51-15"><a aria-hidden="true" href="#cb51-15" tabindex="-1"></a>        <span class="co"># Check authentication</span></span>
+<span id="cb51-16"><a aria-hidden="true" href="#cb51-16" tabindex="-1"></a>        logger.info(<span class="st">"Login attempt by </span><span class="sc">%r</span><span class="st"> with password </span><span class="sc">%r</span><span class="st">"</span>,</span>
+<span id="cb51-17"><a aria-hidden="true" href="#cb51-17" tabindex="-1"></a>                    login, password)</span>
+<span id="cb51-18"><a aria-hidden="true" href="#cb51-18" tabindex="-1"></a>        <span class="cf">if</span> password <span class="op">==</span> static_password:</span>
+<span id="cb51-19"><a aria-hidden="true" href="#cb51-19" tabindex="-1"></a>            <span class="cf">return</span> login</span>
+<span id="cb51-20"><a aria-hidden="true" href="#cb51-20" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span></span></code></pre></div>
 <p>Install the python module by running the following command in the same folder as <code>setup.py</code>:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a aria-hidden="true" href="#cb41-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install .</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb52-1"><a aria-hidden="true" href="#cb52-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install .</span></code></pre></div>
 <p>To make use this great creation in Radicale, set the configuration option <code>type</code> in the <code>auth</code> section to <code>radicale_static_password_auth</code>:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb42-1"><a aria-hidden="true" href="#cb42-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
-<span id="cb42-2"><a aria-hidden="true" href="#cb42-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> radicale_static_password_auth</span></span>
-<span id="cb42-3"><a aria-hidden="true" href="#cb42-3" tabindex="-1"></a><span class="dt">password </span><span class="ot">=</span><span class="st"> secret</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb53-1"><a aria-hidden="true" href="#cb53-1" tabindex="-1"></a><span class="kw">[auth]</span></span>
+<span id="cb53-2"><a aria-hidden="true" href="#cb53-2" tabindex="-1"></a><span class="dt">type </span><span class="ot">=</span><span class="st"> radicale_static_password_auth</span></span>
+<span id="cb53-3"><a aria-hidden="true" href="#cb53-3" tabindex="-1"></a><span class="dt">password </span><span class="ot">=</span><span class="st"> secret</span></span></code></pre></div>
 <p>You can uninstall the module with:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a aria-hidden="true" href="#cb43-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip uninstall radicale_static_password_auth</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb54-1"><a aria-hidden="true" href="#cb54-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip uninstall radicale_static_password_auth</span></code></pre></div>
 </section>
 <section class="level4" id="authentication-plugins">
 <h4>Authentication plugins <a class="headerlink" href="#authentication-plugins">&para;</a></h4>
@@ -1070,10 +1595,6 @@ user2:password2</code></pre>
 </section>
 <section class="level2" id="contribute">
 <h2>Contribute <a class="headerlink" href="#contribute">&para;</a></h2>
-<section class="level4" id="chat-with-us-on-irc">
-<h4>Chat with Us on IRC <a class="headerlink" href="#chat-with-us-on-irc">&para;</a></h4>
-<p>Want to say something? Join our IRC room: <code>##kozea</code> on Freenode.</p>
-</section>
 <section class="level4" id="report-bugs">
 <h4>Report Bugs <a class="headerlink" href="#report-bugs">&para;</a></h4>
 <p>Found a bug? Want a new feature? Report a new issue on the <a href="https://github.com/Kozea/Radicale/issues">Radicale bug-tracker</a>.</p>
@@ -1092,12 +1613,12 @@ user2:password2</code></pre>
 <section class="level4" id="pypi">
 <h4>PyPI <a class="headerlink" href="#pypi">&para;</a></h4>
 <p>Radicale is <a href="https://pypi.python.org/pypi/Radicale/">available on PyPI</a>. To install, just type as superuser:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a aria-hidden="true" href="#cb44-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> radicale</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb55-1"><a aria-hidden="true" href="#cb55-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> radicale</span></code></pre></div>
 </section>
 <section class="level4" id="git-repository">
 <h4>Git Repository <a class="headerlink" href="#git-repository">&para;</a></h4>
 <p>If you want the development version of Radicale, take a look at the <a href="https://github.com/Kozea/Radicale/">git repository on GitHub</a>, or install it directly with:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a aria-hidden="true" href="#cb45-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb56-1"><a aria-hidden="true" href="#cb56-1" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> https://github.com/Kozea/Radicale/archive/master.tar.gz</span></code></pre></div>
 <p>You can also download the content of the repository as an <a href="https://github.com/Kozea/Radicale/tarball/master">archive</a>.</p>
 </section>
 <section class="level4" id="source-packages">
@@ -1109,15 +1630,15 @@ user2:password2</code></pre>
 <p>Radicale has been packaged for:</p>
 <ul>
 <li><a href="https://www.archlinux.org/packages/community/any/radicale/">ArchLinux</a> by David Runge</li>
-<li><a href="http://packages.debian.org/radicale">Debian</a> by Jonas Smedegaard</li>
+<li><a href="https://packages.debian.org/radicale">Debian</a> by Jonas Smedegaard</li>
 <li><a href="https://packages.gentoo.org/packages/www-apps/radicale">Gentoo</a> by Ren&eacute; Neumann, Maxim Koltsov and Manuel R&uuml;ger</li>
-<li><a href="https://src.fedoraproject.org/rpms/radicale">Fedora/RHEL/CentOS</a> by Jorti and Peter Bieringer</li>
+<li><a href="https://src.fedoraproject.org/rpms/radicale">Fedora/EnterpriseLinux</a> by Jorti and Peter Bieringer</li>
 <li><a href="http://madb.mageia.org/package/show/application/0/name/radicale">Mageia</a> by Jani V&auml;limaa</li>
 <li><a href="http://openports.se/productivity/radicale">OpenBSD</a> by Sergey Bronnikov, Stuart Henderson and Ian Darwin</li>
 <li><a href="http://software.opensuse.org/package/Radicale?search_term=radicale">openSUSE</a> by &Aacute;kos Sz&odblac;ts and Rueckert</li>
 <li><a href="http://code.activestate.com/pypm/radicale/">PyPM</a></li>
 <li><a href="http://schoepfer.info/slackware.xhtml#packages-network">Slackware</a> by Johannes Sch&ouml;pfer</li>
-<li><a href="http://packages.trisquel.info/search?searchon=names&amp;keywords=radicale">Trisquel</a></li>
+<li><a href="http://packages.trisquel.info/search?searchon=names&keywords=radicale">Trisquel</a></li>
 <li><a href="http://packages.ubuntu.com/radicale">Ubuntu</a> by the MOTU and Jonas Smedegaard</li>
 </ul>
 <p>Radicale is also <a href="https://cloudron.io/button.html?app=org.radicale.cloudronapp2">available on Cloudron</a> and has a Dockerfile.</p>
