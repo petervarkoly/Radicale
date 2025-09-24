@@ -2,8 +2,8 @@
 # Copyright © 2008 Nicolas Kandel
 # Copyright © 2008 Pascal Halter
 # Copyright © 2008-2017 Guillaume Ayoub
-# Copyright © 2017-2018 Unrud <unrud@outlook.com>
-# Copyright © 2024-2024 Peter Bieringer <pb@bieringer.de>
+# Copyright © 2017-2020 Unrud <unrud@outlook.com>
+# Copyright © 2024-2025 Peter Bieringer <pb@bieringer.de>
 #
 # This library is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class ApplicationPartDelete(ApplicationBase):
         access = Access(self._rights, user, path)
         if not access.check("w"):
             return httputils.NOT_ALLOWED
-        with self._storage.acquire_lock("w", user):
+        with self._storage.acquire_lock("w", user, path=path, request="DELETE"):
             item = next(iter(self._storage.discover(path)), None)
             if not item:
                 return httputils.NOT_FOUND
@@ -83,9 +83,12 @@ class ApplicationPartDelete(ApplicationBase):
                 for i in item.get_all():
                     hook_notification_item_list.append(
                         HookNotificationItem(
-                            HookNotificationItemTypes.DELETE,
-                            access.path,
-                            i.uid
+                            notification_item_type=HookNotificationItemTypes.DELETE,
+                            path=access.path,
+                            content=i.uid,
+                            uid=i.uid,
+                            old_content=item.serialize(),  # type: ignore
+                            new_content=None
                         )
                     )
                 xml_answer = xml_delete(base_prefix, path, item)
@@ -94,9 +97,12 @@ class ApplicationPartDelete(ApplicationBase):
                 assert item.href is not None
                 hook_notification_item_list.append(
                     HookNotificationItem(
-                        HookNotificationItemTypes.DELETE,
-                        access.path,
-                        item.uid
+                        notification_item_type=HookNotificationItemTypes.DELETE,
+                        path=access.path,
+                        content=item.uid,
+                        uid=item.uid,
+                        old_content=item.serialize(),  # type: ignore
+                        new_content=None,
                     )
                 )
                 xml_answer = xml_delete(

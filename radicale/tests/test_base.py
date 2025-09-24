@@ -306,6 +306,22 @@ permissions: RrWw""")
             for uid2 in uids[i + 1:]:
                 assert uid1 != uid2
 
+    def test_add_event_tz_dtend_only(self) -> None:
+        """Add an event having TZ only on DTEND."""
+        self.mkcalendar("/calendar.ics/")
+        event = get_file_content("event_issue1847_1.ics")
+        path = "/calendar.ics/event_issue1847_1.ics"
+        self.put(path, event)
+        _, headers, answer = self.request("GET", path, check=200)
+
+    def test_add_event_tz_dtstart_only(self) -> None:
+        """Add an event having TZ only on DTSTART."""
+        self.mkcalendar("/calendar.ics/")
+        event = get_file_content("event_issue1847_2.ics")
+        path = "/calendar.ics/event_issue1847_2.ics"
+        self.put(path, event)
+        _, headers, answer = self.request("GET", path, check=200)
+
     def test_verify(self) -> None:
         """Verify the storage."""
         contacts = get_file_content("contact_multiple.vcf")
@@ -1211,6 +1227,90 @@ permissions: RrWw""")
     <C:comp-filter name="VEVENT">
         <C:time-range start="20170602T080000Z" end="20170603T083000Z"/>
     </C:comp-filter>
+</C:comp-filter>"""], items=(9,))
+        assert "/calendar.ics/event9.ics" not in answer
+
+    def test_time_range_filter_without_comp_filter(self) -> None:
+        """Report request with time-range filter without comp-filter on events."""
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20130801T000000Z" end="20131001T000000Z"/>
+</C:comp-filter>"""], "event", items=range(1, 6))
+        assert "/calendar.ics/event1.ics" in answer
+        assert "/calendar.ics/event2.ics" in answer
+        assert "/calendar.ics/event3.ics" in answer
+        assert "/calendar.ics/event4.ics" in answer
+        assert "/calendar.ics/event5.ics" in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20130902T000000Z" end="20131001T000000Z"/>
+</C:comp-filter>"""], items=range(1, 6))
+        assert "/calendar.ics/event1.ics" not in answer
+        assert "/calendar.ics/event2.ics" in answer
+        assert "/calendar.ics/event3.ics" in answer
+        assert "/calendar.ics/event4.ics" in answer
+        assert "/calendar.ics/event5.ics" in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20130903T000000Z" end="20130908T000000Z"/>
+</C:comp-filter>"""], items=range(1, 6))
+        assert "/calendar.ics/event1.ics" not in answer
+        assert "/calendar.ics/event2.ics" not in answer
+        assert "/calendar.ics/event3.ics" in answer
+        assert "/calendar.ics/event4.ics" in answer
+        assert "/calendar.ics/event5.ics" in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20130903T000000Z" end="20130904T000000Z"/>
+</C:comp-filter>"""], items=range(1, 6))
+        assert "/calendar.ics/event1.ics" not in answer
+        assert "/calendar.ics/event2.ics" not in answer
+        assert "/calendar.ics/event3.ics" in answer
+        assert "/calendar.ics/event4.ics" not in answer
+        assert "/calendar.ics/event5.ics" not in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20130805T000000Z" end="20130810T000000Z"/>
+</C:comp-filter>"""], items=range(1, 6))
+        assert "/calendar.ics/event1.ics" not in answer
+        assert "/calendar.ics/event2.ics" not in answer
+        assert "/calendar.ics/event3.ics" not in answer
+        assert "/calendar.ics/event4.ics" not in answer
+        assert "/calendar.ics/event5.ics" not in answer
+        # HACK: VObject doesn't match RECURRENCE-ID to recurrences, the
+        # overwritten recurrence is still used for filtering.
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20170601T063000Z" end="20170601T070000Z"/>
+</C:comp-filter>"""], items=(6, 7, 8, 9))
+        assert "/calendar.ics/event6.ics" in answer
+        assert "/calendar.ics/event7.ics" in answer
+        assert "/calendar.ics/event8.ics" in answer
+        assert "/calendar.ics/event9.ics" in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20170701T060000Z"/>
+</C:comp-filter>"""], items=(6, 7, 8, 9))
+        assert "/calendar.ics/event6.ics" in answer
+        assert "/calendar.ics/event7.ics" in answer
+        assert "/calendar.ics/event8.ics" in answer
+        assert "/calendar.ics/event9.ics" not in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20170702T070000Z" end="20170704T060000Z"/>
+</C:comp-filter>"""], items=(6, 7, 8, 9))
+        assert "/calendar.ics/event6.ics" not in answer
+        assert "/calendar.ics/event7.ics" not in answer
+        assert "/calendar.ics/event8.ics" not in answer
+        assert "/calendar.ics/event9.ics" not in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20170602T075959Z" end="20170602T080000Z"/>
+</C:comp-filter>"""], items=(9,))
+        assert "/calendar.ics/event9.ics" in answer
+        answer = self._test_filter(["""\
+<C:comp-filter name="VCALENDAR">
+        <C:time-range start="20170602T080000Z" end="20170603T083000Z"/>
 </C:comp-filter>"""], items=(9,))
         assert "/calendar.ics/event9.ics" not in answer
 

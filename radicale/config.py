@@ -38,6 +38,7 @@ from typing import (Any, Callable, ClassVar, Iterable, List, Optional,
                     Sequence, Tuple, TypeVar, Union)
 
 from radicale import auth, hook, rights, storage, types, web
+from radicale.hook import email
 from radicale.item import check_and_sanitize_props
 
 DEFAULT_CONFIG_PATH: str = os.pathsep.join([
@@ -85,6 +86,7 @@ def list_of_ip_address(value: Any) -> List[Tuple[str, int]]:
             return address.strip(string.whitespace + "[]"), int(port)
         except ValueError:
             raise ValueError("malformed IP address: %r" % value)
+
     return [ip_address(s) for s in value.split(",")]
 
 
@@ -251,6 +253,11 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "value": "12345",
             "help": "dovecot auth port",
             "type": int}),
+        ("remote_ip_source", {
+            "value": "REMOTE_ADDR",
+            "help": "remote address source for passing it to auth method",
+            "type": str,
+            "internal": auth.REMOTE_ADDR_SOURCE}),
         ("realm", {
             "value": "Radicale - Password Required",
             "help": "message displayed when a password is needed",
@@ -259,70 +266,70 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "value": "1",
             "help": "incorrect authentication delay",
             "type": positive_float}),
-        ("ldap_ignore_attribute_create_modify_timestamp", {
-            "value": "false",
-            "help": "Ignore modifyTimestamp and createTimestamp attributes. Need if Authentik LDAP server is used.",
-            "type": bool}),
         ("ldap_uri", {
             "value": "ldap://localhost",
-            "help": "URI to the ldap server",
+            "help": "URI to the LDAP server",
             "type": str}),
         ("ldap_base", {
             "value": "",
-            "help": "The base DN of the ldap server where the user can be find.",
+            "help": "Base DN of the LDAP server",
             "type": str}),
         ("ldap_reader_dn", {
             "value": "",
-            "help": "The DN of a ldap user with read access to get the user accounts",
+            "help": "DN of an LDAP user with read access to users anmd - if defined - groups",
             "type": str}),
         ("ldap_secret", {
             "value": "",
-            "help": "The password of the ldap_reader_dn",
+            "help": "Password of ldap_reader_dn (better: use ldap_secret_file)",
             "type": str}),
         ("ldap_secret_file", {
             "value": "",
-            "help": "Path of the file containing the password of the ldap_reader_dn",
+            "help": "Path to the file containing the password of ldap_reader_dn",
             "type": str}),
         ("ldap_filter", {
             "value": "(cn={0})",
-            "help": "The search filter to find the user DN to authenticate by the username",
+            "help": "Filter to search for the LDAP entry of the user to authenticate",
             "type": str}),
         ("ldap_user_attribute", {
             "value": "",
-            "help": "The attribute to be used as username after authentication",
-            "type": str}),
-        ("ldap_groups_attribute", {
-            "value": "",
-            "help": "Attribute in the user entry to read the group memberships from.",
-            "type": str}),
-        ("ldap_group_members_attribute", {
-            "value": "",
-            "help": "Attribute in the group entries to read the group members from.",
-            "type": str}),
-        ("ldap_groups_base", {
-            "value": "",
-            "help": "The base dn to find the groups. Necessary only if ldap_group_members_attribute is defined and different from ldap_base.",
-            "type": str}),
-        ("ldap_groups_filter", {
-            "value": "",
-            "help": "Additional filter to find the groups when ldap_group_members_attribute is defined. The following filter will be built (&{ldap_groups_filter}({ldap_group_members_attribute}={user_dn})",
+            "help": "Attribute to be used as username after authentication",
             "type": str}),
         ("ldap_use_ssl", {
             "value": "False",
-            "help": "Use ssl on the ldap connection. Soon to be deprecated, use ldap_security instead",
+            "help": "Use ssl on the LDAP connection. Deprecated, use ldap_security instead!",
             "type": bool}),
         ("ldap_security", {
             "value": "none",
-            "help": "the encryption mode to be used: *none*|tls|starttls",
+            "help": "Encryption mode to be used: *none*|tls|starttls",
             "type": str}),
         ("ldap_ssl_verify_mode", {
             "value": "REQUIRED",
-            "help": "The certificate verification mode. Works for tls and starttls. NONE, OPTIONAL, default is REQUIRED",
+            "help": "Certificate verification mode for tls and starttls. NONE, OPTIONAL, default is REQUIRED",
             "type": str}),
         ("ldap_ssl_ca_file", {
             "value": "",
-            "help": "The path to the CA file in pem format which is used to certificate the server certificate",
+            "help": "Path to the CA file in PEM format which is used to certify the server certificate",
             "type": str}),
+        ("ldap_groups_attribute", {
+            "value": "",
+            "help": "Attribute in the user's LDAP entry to read the group memberships from",
+            "type": str}),
+        ("ldap_group_members_attribute", {
+            "value": "",
+            "help": "Attribute in the group entries to read the group's members from",
+            "type": str}),
+        ("ldap_group_base", {
+            "value": "",
+            "help": "Base DN to search for groups. Only if it differs from ldap_base and if ldap_group_members_attribute is set",
+            "type": str}),
+        ("ldap_group_filter", {
+            "value": "",
+            "help": "Search filter to search for groups having the user as member. Only if ldap_group_members_attribute is set",
+            "type": str}),
+        ("ldap_ignore_attribute_create_modify_timestamp", {
+            "value": "false",
+            "help": "Quirk for Authentik LDAP server: ignore modifyTimestamp and createTimestamp attributes.",
+            "type": bool}),
         ("imap_host", {
             "value": "localhost",
             "help": "IMAP server hostname: address|address:port|[address]:port|*localhost*",
@@ -437,6 +444,10 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "help": "hook backend",
             "type": str,
             "internal": hook.INTERNAL_TYPES}),
+        ("dryrun", {
+            "value": "False",
+            "help": "dry-run (do not really trigger hook action)",
+            "type": bool}),
         ("rabbitmq_endpoint", {
             "value": "",
             "help": "endpoint where rabbitmq server is running",
@@ -448,7 +459,77 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
         ("rabbitmq_queue_type", {
             "value": "",
             "help": "queue type for topic declaration",
-            "type": str})])),
+            "type": str}),
+        ("smtp_server", {
+            "value": "",
+            "help": "SMTP server to send emails",
+            "type": str}),
+        ("smtp_port", {
+            "value": "",
+            "help": "SMTP server port",
+            "type": str}),
+        ("smtp_security", {
+            "value": "none",
+            "help": "SMTP security mode: *none*|tls|starttls",
+            "type": str,
+            "internal": email.SMTP_SECURITY_TYPES}),
+        ("smtp_ssl_verify_mode", {
+            "value": "REQUIRED",
+            "help": "The certificate verification mode. Works for tls and starttls: NONE, OPTIONAL, default is REQUIRED",
+            "type": str,
+            "internal": email.SMTP_SSL_VERIFY_MODES}),
+        ("smtp_username", {
+            "value": "",
+            "help": "SMTP server username",
+            "type": str}),
+        ("smtp_password", {
+            "value": "",
+            "help": "SMTP server password",
+            "type": str}),
+        ("from_email", {
+            "value": "",
+            "help": "SMTP server password",
+            "type": str}),
+        ("mass_email", {
+            "value": "False",
+            "help": "Send one email to all attendees, versus one email per attendee",
+            "type": bool}),
+        ("new_or_added_to_event_template", {
+            "value": """Hello $attendee_name,
+
+You have been added as an attendee to the following calendar event.
+
+    $event_title
+    $event_start_time - $event_end_time
+    $event_location
+
+This is an automated message. Please do not reply.""",
+            "help": "Template for the email sent when an event is created or attendee is added. Select placeholder words prefixed with $ will be replaced",
+            "type": str}),
+        ("deleted_or_removed_from_event_template", {
+            "value": """Hello $attendee_name,
+
+The following event has been deleted.
+
+    $event_title
+    $event_start_time - $event_end_time
+    $event_location
+
+This is an automated message. Please do not reply.""",
+            "help": "Template for the email sent when an event is deleted or attendee is removed. Select placeholder words prefixed with $ will be replaced",
+            "type": str}),
+        ("updated_event_template", {
+            "value": """Hello $attendee_name,
+The following event has been updated.
+    $event_title
+    $event_start_time - $event_end_time
+    $event_location
+
+This is an automated message. Please do not reply.""",
+            "help": "Template for the email sent when an event is updated. Select placeholder words prefixed with $ will be replaced",
+            "type": str
+        })
+    ])),
     ("web", OrderedDict([
         ("type", {
             "value": "internal",
@@ -460,6 +541,14 @@ DEFAULT_CONFIG_SCHEMA: types.CONFIG_SCHEMA = OrderedDict([
             "value": "info",
             "help": "threshold for the logger",
             "type": logging_level}),
+        ("trace_on_debug", {
+            "value": "False",
+            "help": "do not filter debug messages starting with 'TRACE'",
+            "type": bool}),
+        ("trace_filter", {
+            "value": "",
+            "help": "filter debug messages starting with 'TRACE/<TOKEN>'",
+            "type": str}),
         ("bad_put_request_content", {
             "value": "False",
             "help": "log bad PUT request content",
@@ -569,7 +658,6 @@ _Self = TypeVar("_Self", bound="Configuration")
 
 
 class Configuration:
-
     SOURCE_MISSING: ClassVar[types.CONFIG] = {}
 
     _schema: types.CONFIG_SCHEMA

@@ -86,7 +86,7 @@ class ApplicationPartProppatch(ApplicationBase):
         except socket.timeout:
             logger.debug("Client timed out", exc_info=True)
             return httputils.REQUEST_TIMEOUT
-        with self._storage.acquire_lock("w", user):
+        with self._storage.acquire_lock("w", user, path=path, request="PROPPATCH"):
             item = next(iter(self._storage.discover(path)), None)
             if not item:
                 return httputils.NOT_FOUND
@@ -100,13 +100,17 @@ class ApplicationPartProppatch(ApplicationBase):
                 xml_answer = xml_proppatch(base_prefix, path, xml_content,
                                            item)
                 if xml_content is not None:
+                    content = DefusedET.tostring(
+                        xml_content,
+                        encoding=self._encoding
+                    ).decode(encoding=self._encoding)
                     hook_notification_item = HookNotificationItem(
-                        HookNotificationItemTypes.CPATCH,
-                        access.path,
-                        DefusedET.tostring(
-                            xml_content,
-                            encoding=self._encoding
-                        ).decode(encoding=self._encoding)
+                        notification_item_type=HookNotificationItemTypes.CPATCH,
+                        path=access.path,
+                        content=content,
+                        uid=None,
+                        old_content=None,
+                        new_content=content
                     )
                     self._hook.notify(hook_notification_item)
             except ValueError as e:

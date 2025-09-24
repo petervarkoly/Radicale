@@ -1,7 +1,8 @@
 # This file is part of Radicale - CalDAV and CardDAV server
 # Copyright © 2014 Jean-Marc Martins
 # Copyright © 2012-2017 Guillaume Ayoub
-# Copyright © 2017-2018 Unrud <unrud@outlook.com>
+# Copyright © 2017-2022 Unrud <unrud@outlook.com>
+# Copyright © 2025-2025 Peter Bieringer <pb@bieringer.de>
 #
 # This library is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,13 +24,14 @@ Helper functions for working with the file system.
 
 import errno
 import os
+import pathlib
 import posixpath
 import sys
 import threading
 from tempfile import TemporaryDirectory
 from typing import Iterator, Type, Union
 
-from radicale import storage, types
+from radicale import storage, types, utils
 
 if sys.platform == "win32":
     import ctypes
@@ -314,3 +316,40 @@ def name_from_path(path: str, collection: "storage.BaseCollection") -> str:
         raise ValueError("%r is not a component in collection %r" %
                          (name, collection.path))
     return name
+
+
+def path_permissions(path):
+    path = pathlib.Path(path)
+
+    try:
+        uid = utils.unknown_if_empty(path.stat().st_uid)
+    except (KeyError, NotImplementedError):
+        uid = "UNKNOWN"
+
+    try:
+        gid = utils.unknown_if_empty(path.stat().st_gid)
+    except (KeyError, NotImplementedError):
+        gid = "UNKNOWN"
+
+    try:
+        mode = utils.unknown_if_empty("%o" % path.stat().st_mode)
+    except (KeyError, NotImplementedError):
+        mode = "UNKNOWN"
+
+    try:
+        owner = utils.unknown_if_empty(path.owner())
+    except (KeyError, NotImplementedError):
+        owner = "UNKNOWN"
+
+    try:
+        group = utils.unknown_if_empty(path.group())
+    except (KeyError, NotImplementedError):
+        group = "UNKNOWN"
+
+    return [owner, uid, group, gid, mode]
+
+
+def path_permissions_as_string(path):
+    pp = path_permissions(path)
+    s = "path=%r owner=%s(%s) group=%s(%s) mode=%s" % (path, pp[0], pp[1], pp[2], pp[3], pp[4])
+    return s

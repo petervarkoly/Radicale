@@ -49,6 +49,7 @@ from radicale.app.propfind import ApplicationPartPropfind
 from radicale.app.proppatch import ApplicationPartProppatch
 from radicale.app.put import ApplicationPartPut
 from radicale.app.report import ApplicationPartReport
+from radicale.auth import AuthContext
 from radicale.log import logger
 
 # Combination of types.WSGIStartResponse and WSGI application return value
@@ -68,6 +69,8 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
     _internal_server: bool
     _max_content_length: int
     _auth_realm: str
+    _auth_type: str
+    _web_type: str
     _script_name: str
     _extra_headers: Mapping[str, str]
     _permit_delete_collection: bool
@@ -87,6 +90,8 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
         self._request_header_on_debug = configuration.get("logging", "request_header_on_debug")
         self._response_content_on_debug = configuration.get("logging", "response_content_on_debug")
         self._auth_delay = configuration.get("auth", "delay")
+        self._auth_type = configuration.get("auth", "type")
+        self._web_type = configuration.get("web", "type")
         self._internal_server = configuration.get("server", "_internal_server")
         self._script_name = configuration.get("server", "script_name")
         if self._script_name:
@@ -152,6 +157,8 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
         unsafe_path = environ.get("PATH_INFO", "")
         https = environ.get("HTTPS", "")
 
+        context = AuthContext()
+
         """Manage a request."""
         def response(status: int, headers: types.WSGIResponseHeaders,
                      answer: Union[None, str, bytes]) -> _IntermediateResponse:
@@ -197,12 +204,16 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
         remote_host = "unknown"
         if environ.get("REMOTE_HOST"):
             remote_host = repr(environ["REMOTE_HOST"])
-        elif environ.get("REMOTE_ADDR"):
-            remote_host = environ["REMOTE_ADDR"]
+        if environ.get("REMOTE_ADDR"):
+            if remote_host == 'unknown':
+                remote_host = environ["REMOTE_ADDR"]
+            context.remote_addr = environ["REMOTE_ADDR"]
         if environ.get("HTTP_X_FORWARDED_FOR"):
             reverse_proxy = True
             remote_host = "%s (forwarded for %r)" % (
                 remote_host, environ["HTTP_X_FORWARDED_FOR"])
+        if environ.get("HTTP_X_REMOTE_ADDR"):
+            context.x_remote_addr = environ["HTTP_X_REMOTE_ADDR"]
         if environ.get("HTTP_X_FORWARDED_HOST") or environ.get("HTTP_X_FORWARDED_PROTO") or environ.get("HTTP_X_FORWARDED_SERVER"):
             reverse_proxy = True
         remote_useragent = ""
@@ -257,7 +268,10 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
                 logger.debug("Called by reverse proxy, remove base prefix %r from path: %r => %r", base_prefix, path, path_new)
                 path = path_new
             else:
-                logger.warning("Called by reverse proxy, cannot remove base prefix %r from path: %r as not matching", base_prefix, path)
+                if self._auth_type in ['remote_user', 'http_x_remote_user'] and self._web_type == 'internal':
+                    logger.warning("Called by reverse proxy, cannot remove base prefix %r from path: %r as not matching (may cause authentication issues using internal WebUI)", base_prefix, path)
+                else:
+                    logger.debug("Called by reverse proxy, cannot remove base prefix %r from path: %r as not matching", base_prefix, path)
 
         # Get function corresponding to method
         function = getattr(self, "do_%s" % request_method, None)
@@ -288,10 +302,10 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
                 self.configuration, environ, base64.b64decode(
                     authorization.encode("ascii"))).split(":", 1)
 
-        (user, info) = self._auth.login(login, password) or ("", "") if login else ("", "")
+        (user, info) = self._auth.login(login, password, context) or ("", "") if login else ("", "")
         if self.configuration.get("auth", "type") == "ldap":
             try:
-                logger.debug("Groups %r", ",".join(self._auth._ldap_groups))
+                logger.debug("Groups received from LDAP: %r", ",".join(self._auth._ldap_groups))
                 self._rights._user_groups = self._auth._ldap_groups
             except AttributeError:
                 pass
@@ -323,7 +337,7 @@ class Application(ApplicationPartDelete, ApplicationPartHead,
                 if "W" in self._rights.authorization(user, principal_path):
                     with self._storage.acquire_lock("w", user):
                         try:
-                            new_coll = self._storage.create_collection(principal_path)
+                            new_coll, _, _ = self._storage.create_collection(principal_path)
                             if new_coll:
                                 jsn_coll = self.configuration.get("storage", "predefined_collections")
                                 for (name_coll, props) in jsn_coll.items():

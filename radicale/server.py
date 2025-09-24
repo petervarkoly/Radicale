@@ -25,6 +25,7 @@ Built-in WSGI server.
 
 import http
 import os
+import platform
 import select
 import socket
 import socketserver
@@ -297,7 +298,7 @@ def serve(configuration: config.Configuration,
         info = "with PYTHONPATH=%r " % os.environ.get("PYTHONPATH")
     else:
         info = ""
-    logger.info("Starting Radicale %s(%s)", info, utils.packages_version())
+    logger.info("Starting Radicale %s(%s) as %s on %s", info, utils.packages_version(), utils.user_groups_as_string(), platform.platform())
     # Copy configuration before modifying
     configuration = configuration.copy()
     configuration.update({"server": {"_internal_server": "True"}}, "server",
@@ -339,6 +340,8 @@ def serve(configuration: config.Configuration,
             select_timeout = 1.0
         max_connections: int = configuration.get("server", "max_connections")
         logger.info("Radicale server ready")
+        logger.debug("TRACE: Radicale server ready ('logging/trace_on_debug' is active)")
+        logger.debug("TRACE/SERVER: Radicale server ready ('logging/trace_on_debug' is active - either with 'SERVER' or empty filter)")
         while True:
             rlist: List[socket.socket] = []
             # Wait for finished clients

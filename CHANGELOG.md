@@ -1,5 +1,32 @@
 # Changelog
 
+## 3.5.7.dev
+* Extend: [auth] dovecot: add support for version >= 2.4
+
+## 3.5.6
+* Fix: broken start when UID does not exist (potential container startup case)
+* Improve: user/group retrievement for running service and directories
+* Extend/Improve: [auth] ldap: group membership lookup
+* Add: [auth] remote_ip_source: set the remote IP source for auth algorithms
+
+## 3.5.5
+* Improve: [auth] ldap: do not read server info by bind to avoid needless network traffic
+* Fix: [storage] broken support of 'folder_umask'
+* Improve: add details about platform and effective user on startup
+* Improve: display owner+permissions on directories on startup, extend error message in case of missing permissions
+* Feature: add hook for server-side e-mail notification
+* Fix: logging ignores not retrievable get_native_id if not supported by OS
+* Fix: report with enabled expand honors now provided filter proper
+* Improve: add options [logging] trace_on_debug and trace_filter for supporting trace logging
+* Fix: catch case where getpwuid is not returning a username
+* Fix: add support for query without comp-type
+* Fix: expanded event with dates are missing VALUE=DATE
+* Add: [hook] dryrun: option to disable real hook action for testing, add tests for email+rabbitmq
+* Fix: storage hook path now added to DELETE, MKCOL, MKCALENDAR, MOVE, and PROPPATCH
+* Add: storage hook placeholder now supports "request" and "to_path" (MOVE only)
+* Improve: catch items having tzinfo only on dtstart or dtend set for whatever reason, overtake tzinfo from the other one
+* Improve: conditional log level for base_prefix strip action depending on auth and web type
+
 ## 3.5.4
 * Improve: item filter enhanced for 3rd level supporting VALARM and honoring TRIGGER (offset or absolute)
 * Enhancement: add Caddy config file example (see contrib directory)
@@ -111,7 +138,7 @@
 * Fix: Using icalendar's tzinfo on created datetime to fix issue with icalendar
 * Fix: typos in code
 * Enhancement: Added free-busy report
-* Enhancement: Added 'max_freebusy_occurrences` setting to avoid potential DOS on reports
+* Enhancement: Added 'max_freebusy_occurrences` setting to avoid potential DoS on reports
 * Enhancement: remove unexpected control codes from uploaded items
 * Enhancement: add 'strip_domain' setting for username handling
 * Enhancement: add option to toggle debug log of rights rule with doesn't match

@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Radicale.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+import os
 import ssl
 import sys
 from importlib import import_module, metadata
@@ -24,6 +26,10 @@ from typing import Callable, Sequence, Tuple, Type, TypeVar, Union
 
 from radicale import config
 from radicale.log import logger
+
+if sys.platform != "win32":
+    import grp
+    import pwd
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -39,6 +45,10 @@ RADICALE_MODULES: Sequence[str] = ("radicale", "vobject", "passlib", "defusedxml
 # IPv4 (host, port) and IPv6 (host, port, flowinfo, scopeid)
 ADDRESS_TYPE = Union[Tuple[Union[str, bytes, bytearray], int],
                      Tuple[str, int, int, int]]
+
+
+# Max YEAR in datetime in unixtime
+DATETIME_MAX_UNIXTIME: int = (datetime.MAXYEAR - 1970) * 365 * 24 * 60 * 60
 
 
 def load_plugin(internal_types: Sequence[str], module_name: str,
@@ -214,3 +224,67 @@ def ssl_get_protocols(context):
         if (context.minimum_version <= ssl.TLSVersion.TLSv1_3) and (context.maximum_version >= ssl.TLSVersion.TLSv1_3):
             protocols.append("TLSv1.3")
     return protocols
+
+
+def unknown_if_empty(value):
+    if value == "":
+        return "UNKNOWN"
+    else:
+        return value
+
+
+def user_groups_as_string():
+    if sys.platform != "win32":
+        euid = os.geteuid()
+        try:
+            username = pwd.getpwuid(euid)[0]
+            user = "%s(%d)" % (unknown_if_empty(username), euid)
+        except Exception:
+            # name of user not found
+            user = "UNKNOWN(%d)" % euid
+
+        egid = os.getegid()
+        groups = []
+        try:
+            gids = os.getgrouplist(username, egid)
+            for gid in gids:
+                try:
+                    gi = grp.getgrgid(gid)
+                    groups.append("%s(%d)" % (unknown_if_empty(gi.gr_name), gid))
+                except Exception:
+                    groups.append("UNKNOWN(%d)" % gid)
+        except Exception:
+            try:
+                groups.append("%s(%d)" % (grp.getgrnam(egid)[0], egid))
+            except Exception:
+                # workaround to get groupid by name
+                groups_all = grp.getgrall()
+                found = False
+                for entry in groups_all:
+                    if entry[2] == egid:
+                        groups.append("%s(%d)" % (unknown_if_empty(entry[0]), egid))
+                        found = True
+                        break
+                if not found:
+                    groups.append("UNKNOWN(%d)" % egid)
+
+        s = "user=%s groups=%s" % (user, ','.join(groups))
+    else:
+        username = os.getlogin()
+        s = "user=%s" % (username)
+    return s
+
+
+def format_ut(unixtime: int) -> str:
+    if sys.platform == "win32":
+        # TODO check how to support this better
+        return str(unixtime)
+    if unixtime < DATETIME_MAX_UNIXTIME:
+        if sys.version_info < (3, 11):
+            dt = datetime.datetime.utcfromtimestamp(unixtime)
+        else:
+            dt = datetime.datetime.fromtimestamp(unixtime, datetime.UTC)
+        r = str(unixtime) + "(" + dt.strftime('%Y-%m-%dT%H:%M:%SZ') + ")"
+    else:
+        r = str(unixtime) + "(>MAX:" + str(DATETIME_MAX_UNIXTIME) + ")"
+    return r

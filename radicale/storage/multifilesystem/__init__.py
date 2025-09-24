@@ -29,7 +29,7 @@ import sys
 import time
 from typing import ClassVar, Iterator, Optional, Type
 
-from radicale import config
+from radicale import config, pathutils, utils
 from radicale.log import logger
 from radicale.storage.multifilesystem.base import CollectionBase, StorageBase
 from radicale.storage.multifilesystem.cache import CollectionPartCache
@@ -146,14 +146,31 @@ class Storage(
 
     def __init__(self, configuration: config.Configuration) -> None:
         super().__init__(configuration)
+        if sys.platform != "win32":
+            if not self._folder_umask:
+                # retrieve current umask by setting a dummy umask
+                current_umask = os.umask(0o0022)
+                logger.info("Storage folder umask (from system): '%04o'", current_umask)
+                # reset to original
+                os.umask(current_umask)
+            else:
+                try:
+                    config_umask = int(self._folder_umask, 8)
+                except Exception:
+                    logger.critical("storage folder umask defined but invalid: '%s'", self._folder_umask)
+                    raise
+                logger.info("storage folder umask defined: '%04o'", config_umask)
+                self._config_umask = config_umask
         logger.info("Storage location: %r", self._filesystem_folder)
         if not os.path.exists(self._filesystem_folder):
             logger.warning("Storage location: %r does not exist, creating now", self._filesystem_folder)
             self._makedirs_synced(self._filesystem_folder)
+        logger.info("Storage location permissions: %s", pathutils.path_permissions_as_string(self._filesystem_folder))
         logger.info("Storage location subfolder: %r", self._get_collection_root_folder())
         if not os.path.exists(self._get_collection_root_folder()):
             logger.warning("Storage location subfolder: %r does not exist, creating now", self._get_collection_root_folder())
             self._makedirs_synced(self._get_collection_root_folder())
+        logger.info("Storage location subfolder permissions: %s", pathutils.path_permissions_as_string(self._get_collection_root_folder()))
         logger.info("Storage cache subfolder usage for 'item': %s", self._use_cache_subfolder_for_item)
         logger.info("Storage cache subfolder usage for 'history': %s", self._use_cache_subfolder_for_history)
         logger.info("Storage cache subfolder usage for 'sync-token': %s", self._use_cache_subfolder_for_synctoken)
@@ -170,6 +187,9 @@ class Storage(
                 logger.info("Storage item mtime resolution test result: %d %s" % (precision_unit, unit))
                 if self._use_mtime_and_size_for_item_cache is False:
                     logger.info("Storage cache using mtime and size for 'item' may be an option in case of performance issues")
+        except PermissionError as e:
+            logger.error("Directory permissions: %s / Effective user: %s", pathutils.path_permissions_as_string(self._get_collection_root_folder()), utils.user_groups_as_string())
+            raise e
         except Exception:
             logger.warning("Storage item mtime resolution test result not successful")
         logger.debug("Storage cache action logging: %s", self._debug_cache_actions)
@@ -178,18 +198,4 @@ class Storage(
             if not os.path.exists(self._get_collection_cache_folder()):
                 logger.warning("Storage cache subfolder: %r does not exist, creating now", self._get_collection_cache_folder())
                 self._makedirs_synced(self._get_collection_cache_folder())
-        if sys.platform != "win32":
-            if not self._folder_umask:
-                # retrieve current umask by setting a dummy umask
-                current_umask = os.umask(0o0022)
-                logger.info("Storage folder umask (from system): '%04o'", current_umask)
-                # reset to original
-                os.umask(current_umask)
-            else:
-                try:
-                    config_umask = int(self._folder_umask, 8)
-                except Exception:
-                    logger.critical("storage folder umask defined but invalid: '%s'", self._folder_umask)
-                    raise
-                logger.info("storage folder umask defined: '%04o'", config_umask)
-                self._config_umask = config_umask
+            logger.info("Storage cache subfolder permissions: %s", pathutils.path_permissions_as_string(self._get_collection_cache_folder()))
